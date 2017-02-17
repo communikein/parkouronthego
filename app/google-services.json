@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "18183355600",
+    "firebase_url": "https://waveonthego-159012.firebaseio.com",
+    "project_id": "waveonthego-159012",
+    "storage_bucket": "waveonthego-159012.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18183355600:android:b75f84cd238bed2b",
+        "android_client_info": {
+          "package_name": "it.communikein.waveonthego"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18183355600-u2rbd7sj6pa70e346t1ofk0pav7oent3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.communikein.waveonthego",
+            "certificate_hash": "3EF3619BF4F9AF36DD4E14BF588EEFDD48BB3D92"
+          }
+        },
+        {
+          "client_id": "18183355600-qeill0uh7si69b7ak3fsnr2c1dknjq9h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.communikein.waveonthego",
+            "certificate_hash": "6668FC3ADEC7AE4E367B9D5EFCD2CCC7BD17989D"
+          }
+        },
+        {
+          "client_id": "18183355600-odnrdl4gi9ieo5ptcoei6kod5luo084t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-q16Naz2mSDilZJ52acoopIVP3BQ0ePg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18183355600-odnrdl4gi9ieo5ptcoei6kod5luo084t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
