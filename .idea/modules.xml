@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WaveOnTheGo.iml" filepath="$PROJECT_DIR$/WaveOnTheGo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/waveonthego.iml" filepath="$PROJECT_DIR$/waveonthego.iml" />
     </modules>
   </component>
 </project>

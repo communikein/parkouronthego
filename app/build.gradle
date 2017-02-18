@@ -17,7 +17,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "0.1"
-        vectorDrawables.useSupportLibrary= true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -26,6 +26,10 @@ android {
             signingConfig signingConfigs.config
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -44,6 +48,7 @@ dependencies {
 
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'org.jsoup:jsoup:1.10.2'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 
 apply plugin: 'com.google.gms.google-services'

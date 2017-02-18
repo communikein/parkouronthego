@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">WaveOnTheGo</string>
     <string name="title_home">Home</string>
+    <string name="title_news">News</string>
+    <string name="title_events">Events</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="facebook_app_id">387053925001320</string>
+    <string name="fb_login_protocol_scheme">fb387053925001320</string>
 </resources>
