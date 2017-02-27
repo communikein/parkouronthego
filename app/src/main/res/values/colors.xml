@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#258A1C</color>
+    <color name="colorPrimaryDark">#185B12</color>
+    <color name="colorPrimaryLight">#30B324</color>
+    <color name="colorAccent">#0022C9</color>
+
+    <color name="today">#4b82ff</color>
+    <color name="greyed_out">#c7c7c7</color>
+    <color name="green">#195714</color>
 
     <color name="primary_text">#212121</color>
     <color name="textPrimaryColor">@color/primary_text</color>

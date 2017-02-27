@@ -3,6 +3,7 @@ package it.communikein.waveonthego;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -14,12 +15,13 @@ import java.util.ArrayList;
  */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
 
-    interface OnLastItemShowed {
-        void onLastItemShowed(Event last);
+    public interface OnItemClickListener {
+        void onItemClick(Event event);
     }
 
     private final ArrayList<Event> values;
-    private OnLastItemShowed lastItemShowedListener;
+
+    private OnItemClickListener mListener;
 
     public EventAdapter(ArrayList<Event> values) {
         this.values = values;
@@ -44,10 +46,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             holder.mLocationTextView.setText(event.getLocationString());
         else
             holder.mLocationTextView.setText("Posizione non disponibile.");
-        holder.mDateTextView.setText(event.printDate());
-
-        if (lastItemShowedListener != null && position == values.size() - 1)
-            lastItemShowedListener.onLastItemShowed(event);
+        holder.mDateTextView.setText(Event.printDate(event.getDateStart(), Event.dateAdapterFormat));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -67,21 +66,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         this.values.addAll(values);
     }
 
-    public void setOnLastItemShowedListener(OnLastItemShowed listener) {
-        lastItemShowedListener = listener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
     }
-
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         final TextView mNameTextView;
         final TextView mLocationTextView;
         final TextView mDateTextView;
 
         ViewHolder(CardView v) {
             super(v);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION)
+                            mListener.onItemClick(getData().get(position));
+                    }
+                }
+            });
 
             mNameTextView = (TextView) v.findViewById(R.id.primaryText);
             mLocationTextView = (TextView) v.findViewById(R.id.secondaryText);

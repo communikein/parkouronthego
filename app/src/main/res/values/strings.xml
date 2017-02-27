@@ -8,4 +8,7 @@
 
     <string name="facebook_app_id">387053925001320</string>
     <string name="fb_login_protocol_scheme">fb387053925001320</string>
+
+    <string name="label_event_name">Event name</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

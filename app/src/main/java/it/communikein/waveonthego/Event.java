@@ -11,25 +11,29 @@ import java.util.Locale;
  */
 
 public class Event {
-    public static final SimpleDateFormat datePrintAdapterFormat =
+    public static final SimpleDateFormat dateAdapterFormat =
             new SimpleDateFormat("dd/MM", Locale.getDefault());
     public static final SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd MMMMM yyyy", Locale.getDefault());
+    public static final SimpleDateFormat dateTimeFormat =
+            new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault());
     public static final SimpleDateFormat dateFBFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     private String mName;
     private String mLocation;
     private LatLng mCoords;
-    private Date mDate;
+    private Date mDateStart;
+    private Date mDateEnd;
     private String mDescription;
 
-    public Event(String name, String description, String location, LatLng coords, Date date) {
+    public Event(String name, String description, String location, LatLng coords, Date start, Date end) {
         this.mName = name;
         this.mDescription = description;
         this.mLocation = location;
         this.mCoords = coords;
-        this.mDate = date;
+        this.mDateStart = start;
+        this.mDateEnd = end;
     }
 
     public String getName() {
@@ -64,19 +68,24 @@ public class Event {
         this.mCoords = coords;
     }
 
-    public Date getDate() {
-        return mDate;
+    public Date getDateStart() {
+        return mDateStart;
     }
 
-    public void setDate(Date date) {
-        this.mDate = date;
+    public void setDateStart(Date start) {
+        this.mDateStart = start;
     }
 
-    public String printDate() {
-        return datePrintAdapterFormat.format(getDate());
+    public Date getDateEnd() {
+        return mDateEnd;
     }
 
-    public String printDateFull() {
-        return dateFormat.format(getDate());
+    public void setDateStartEnd(Date end) {
+        this.mDateEnd = end;
+    }
+
+
+    public static String printDate(Date toPrint, SimpleDateFormat sdf) {
+        return sdf.format(toPrint);
     }
 }

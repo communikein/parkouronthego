@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -40,7 +39,6 @@ import java.util.Date;
 public class EventsFragment extends Fragment {
 
     private LoginButton mFBLoginButton;
-    private Button mEventsButton;
 
     CallbackManager mCallbackManager;
     private EventAdapter mAdapter;
@@ -77,41 +75,50 @@ public class EventsFragment extends Fragment {
         mFBLoginButton.setFragment(this);
         setFacebookLoginButton();
 
-        mEventsButton = (Button) view.findViewById(R.id.events_btt);
-        mEventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNews();
-            }
-        });
-
         ArrayList<Event> temp = new ArrayList<>();
         // specify an adapter (see also next example)
         mAdapter = new EventAdapter(temp);
+        mAdapter.setOnItemClickListener(new EventAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Event event) {
+                onEventClick(event);
+            }
+        });
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         // use a linear layout manager
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        if (isLoggedIn()) {
+            mFBLoginButton.setVisibility(View.GONE);
+            getNews();
+        }
+        else
+            mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
     private void getNews() {
-        /* make the API call */
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/parkourwave/events",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
+        if (isLoggedIn()) {
+            /* make the API call */
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/parkourwave/events",
+                    null,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
                         /* handle the result */
-                        ArrayList<Event> events = parseFBResponse(response.getJSONObject());
+                            ArrayList<Event> events = parseFBResponse(response.getJSONObject());
 
-                        updateView(events);
+                            updateView(events);
+                        }
                     }
-                }
-        ).executeAsync();
+            ).executeAsync();
+        }
+        else
+            mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
     private ArrayList<Event> parseFBResponse(JSONObject resp) {
@@ -126,6 +133,14 @@ public class EventsFragment extends Fragment {
                 String name = obj.getString("name");
                 String description = obj.getString("description");
                 String startFB = obj.getString("start_time");
+                Date end = null;
+                if (obj.has("end_time")) {
+                    String endFB = obj.getString("end_time");
+                    String endTime = endFB.substring(endFB.lastIndexOf("T") + 1,
+                            endFB.lastIndexOf("+"));
+                    String endDate = endFB.substring(0, endFB.lastIndexOf("T"));
+                    end = Event.dateFBFormat.parse(endDate + " " + endTime);
+                }
                 String startTime = startFB.substring(startFB.lastIndexOf("T") + 1,
                         startFB.lastIndexOf("+"));
                 String startDate = startFB.substring(0, startFB.lastIndexOf("T"));
@@ -144,7 +159,7 @@ public class EventsFragment extends Fragment {
                         coords = null;
                 }
 
-                ris.add(new Event(name, description, location, coords, start));
+                ris.add(new Event(name, description, location, coords, start, end));
             }
         } catch (JSONException | ParseException e) {
             FirebaseCrash.report(e);
@@ -173,18 +188,35 @@ public class EventsFragment extends Fragment {
         mFBLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                mEventsButton.setEnabled(true);
+                mFBLoginButton.setVisibility(View.GONE);
+                getNews();
             }
 
             @Override
             public void onCancel() {
-                mEventsButton.setEnabled(false);
+                mFBLoginButton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onError(FacebookException error) {
-                mEventsButton.setEnabled(false);
+                mFBLoginButton.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
+    }
+
+    public void onEventClick(Event event) {
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra("LOCATION", event.getLocationString());
+        intent.putExtra("START", Event.printDate(event.getDateStart(), Event.dateFBFormat));
+        intent.putExtra("END", Event.printDate(event.getDateEnd(), Event.dateFBFormat));
+        intent.putExtra("NAME", event.getName());
+        intent.putExtra("DESCRIPTION", event.getDescription());
+        intent.putExtra("COORDS", event.getCoords());
+        startActivity(intent);
     }
 }
