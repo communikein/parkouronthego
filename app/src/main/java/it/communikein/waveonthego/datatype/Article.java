@@ -1,23 +1,17 @@
 package it.communikein.waveonthego.datatype;
 
-import com.google.firebase.database.Exclude;
+
 import com.google.firebase.database.PropertyName;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+
+import it.communikein.waveonthego.Utils;
 
 /**
- * Created by eliam on 17/02/2017.
+ *
+ * Created by Elia Maracani on 17/02/2017.
  */
-
 public class Article {
-
-    private static final SimpleDateFormat datePrintAdapterFormat =
-            new SimpleDateFormat("dd/MM", Locale.getDefault());
-    public static final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("dd MMMMM yyyy", Locale.getDefault());
-
     @PropertyName("id")
     private String mID;
     @PropertyName("title")
@@ -94,6 +88,6 @@ public class Article {
 
 
     public String printDate() {
-        return datePrintAdapterFormat.format(getDatePublish());
+        return Utils.dayMonthFormat.format(getDatePublish());
     }
 }

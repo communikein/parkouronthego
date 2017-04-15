@@ -32,9 +32,11 @@ import java.util.Date;
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.db.DBHandler;
 
+/**
+ *
+ * Created by Elia Maracani on 18/02/2017.
+ */
 public class NewsFragment extends Fragment {
-
-    private RecyclerView mRecyclerView;
 
     private FirebaseArticleListAdapter mAdapter;
     private DatabaseReference ref;
@@ -69,7 +71,7 @@ public class NewsFragment extends Fragment {
     private void initUI(View view) {
         mAdapter = new FirebaseArticleListAdapter(Article.class, ArticleViewHolder.class, ref);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
@@ -134,7 +136,7 @@ public class NewsFragment extends Fragment {
                 String summary = post.select("p.post_excerpt").first().text();
                 String dateStr = post.select("div.date").first().text();
                 dateStr = dateStr.substring(dateStr.indexOf("on") + 3);
-                Date date = Article.dateFormat.parse(dateStr);
+                Date date = Utils.dayMonthYearFormat.parse(dateStr);
 
                 ris.add(new Article(postID, title, summary, URL, date));
             }

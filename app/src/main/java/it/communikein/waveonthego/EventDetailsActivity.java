@@ -93,9 +93,9 @@ public class EventDetailsActivity extends AppCompatActivity
             String start = intent.getStringExtra("START");
             String end = intent.getStringExtra("END");
             try {
-                mStart = Event.dateFBFormat.parse(start);
+                mStart = Utils.dateFBFormat.parse(start);
                 if (end != null)
-                    mEnd = Event.dateFBFormat.parse(end);
+                    mEnd = Utils.dateFBFormat.parse(end);
             } catch (ParseException e) {
                 mStart = null;
                 mEnd = null;
@@ -108,9 +108,9 @@ public class EventDetailsActivity extends AppCompatActivity
         description_txt.setText(mDescription);
         location_txt.setText(mLocation);
 
-        String startEndTime = "Start: " + Event.printDate(mStart, Event.dateTimeFormat)
+        String startEndTime = "Start: " + Event.printDate(mStart, Utils.dateTimeFormat)
                 + "\n"
-                + "End: " + Event.printDate(mEnd, Event.dateTimeFormat);
+                + "End: " + Event.printDate(mEnd, Utils.dateTimeFormat);
         dateTime_txt.setText(startEndTime);
     }
 

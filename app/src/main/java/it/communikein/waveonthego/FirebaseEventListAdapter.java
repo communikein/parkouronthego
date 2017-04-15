@@ -10,7 +10,6 @@ import it.communikein.waveonthego.datatype.Event;
  *
  * Created by Elia Maracani on 15/04/2017.
  */
-
 class FirebaseEventListAdapter extends FirebaseRecyclerAdapter<Event, EventViewHolder> {
 
     /**
@@ -29,7 +28,7 @@ class FirebaseEventListAdapter extends FirebaseRecyclerAdapter<Event, EventViewH
     protected void populateViewHolder(EventViewHolder viewHolder, Event model, int position) {
         viewHolder.mNameTextView.setText(model.getName());
         viewHolder.mLocationTextView.setText(model.getLocationString());
-        viewHolder.mDateTextView.setText(Event.printDate(model.getDateStart(), Event.dateAdapterFormat));
+        viewHolder.mDateTextView.setText(Event.printDate(model.getDateStart(), Utils.dayMonthFormat));
     }
 }
 

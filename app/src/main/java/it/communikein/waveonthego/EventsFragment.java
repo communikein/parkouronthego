@@ -38,15 +38,14 @@ import it.communikein.waveonthego.db.DBHandler;
 
 /**
  *
- * Created by eliam on 18/02/2017.
+ * Created by Elia Maracani on 18/02/2017.
  */
-
 public class EventsFragment extends Fragment {
 
     private LoginButton mFBLoginButton;
 
     CallbackManager mCallbackManager;
-    private RecyclerView mRecyclerView;
+
     private FirebaseEventListAdapter mAdapter;
     private DatabaseReference ref;
 
@@ -73,6 +72,13 @@ public class EventsFragment extends Fragment {
 
         ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ARTICLES);
         initUI(view);
+
+        if (isLoggedIn()) {
+            mFBLoginButton.setVisibility(View.GONE);
+            getEvents();
+        }
+        else
+            mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
     private void initUI(View view) {
@@ -85,17 +91,10 @@ public class EventsFragment extends Fragment {
         // specify an adapter (see also next example)
         mAdapter = new FirebaseEventListAdapter(Event.class, EventViewHolder.class, ref);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
-
-        if (isLoggedIn()) {
-            mFBLoginButton.setVisibility(View.GONE);
-            getEvents();
-        }
-        else
-            mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -146,12 +145,12 @@ public class EventsFragment extends Fragment {
                     String endTime = endFB.substring(endFB.lastIndexOf("T") + 1,
                             endFB.lastIndexOf("+"));
                     String endDate = endFB.substring(0, endFB.lastIndexOf("T"));
-                    end = Event.dateFBFormat.parse(endDate + " " + endTime);
+                    end = Utils.dateFBFormat.parse(endDate + " " + endTime);
                 }
                 String startTime = startFB.substring(startFB.lastIndexOf("T") + 1,
                         startFB.lastIndexOf("+"));
                 String startDate = startFB.substring(0, startFB.lastIndexOf("T"));
-                Date start = Event.dateFBFormat.parse(startDate + " " + startTime);
+                Date start = Utils.dateFBFormat.parse(startDate + " " + startTime);
                 LatLng coords = null;
                 String location = null;
                 if (obj.has("place")) {
@@ -213,8 +212,8 @@ public class EventsFragment extends Fragment {
     public void onEventClick(Event event) {
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
         intent.putExtra("LOCATION", event.getLocationString());
-        intent.putExtra("START", Event.printDate(event.getDateStart(), Event.dateFBFormat));
-        intent.putExtra("END", Event.printDate(event.getDateEnd(), Event.dateFBFormat));
+        intent.putExtra("START", Event.printDate(event.getDateStart(), Utils.dateFBFormat));
+        intent.putExtra("END", Event.printDate(event.getDateEnd(), Utils.dateFBFormat));
         intent.putExtra("NAME", event.getName());
         intent.putExtra("DESCRIPTION", event.getDescription());
         intent.putExtra("COORDS", event.getCoords());

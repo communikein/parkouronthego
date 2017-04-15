@@ -1,27 +1,17 @@
 package it.communikein.waveonthego.datatype;
 
+
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
- * Created by eliam on 18/02/2017.
+ *
+ * Created by Elia Maracani on 18/02/2017.
  */
-
 public class Event {
-    public static final SimpleDateFormat dateAdapterFormat =
-            new SimpleDateFormat("dd/MM", Locale.getDefault());
-    public static final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("dd MMMMM yyyy", Locale.getDefault());
-    public static final SimpleDateFormat dateTimeFormat =
-            new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault());
-    public static final SimpleDateFormat dateFBFormat =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
     @PropertyName("id")
     private String mID;
     @PropertyName("name")
@@ -36,6 +26,7 @@ public class Event {
     private Date mDateEnd;
     @PropertyName("description")
     private String mDescription;
+
 
     public Event() {
         // Needed for Firebase
