@@ -1,5 +1,7 @@
 package it.communikein.waveonthego;
 
+import android.support.design.widget.Snackbar;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -13,5 +15,4 @@ public class Utils {
             new SimpleDateFormat("EEEEEEEEEEE, d MMM yyyy", Locale.getDefault());
     static SimpleDateFormat timeFormat =
             new SimpleDateFormat("HH:mm", Locale.getDefault());
-
 }

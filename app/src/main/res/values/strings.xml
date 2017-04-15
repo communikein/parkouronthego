@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WaveOnTheGo</string>
+    <string name="app_name">Waves On The Move</string>
     <string name="title_home">Home</string>
     <string name="title_news">News</string>
     <string name="title_events">Events</string>
@@ -11,4 +11,10 @@
 
     <string name="label_event_name">Event name</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="title_event_details">Dettagli evento</string>
+    <string name="sign_in_cancelled">Hai interrotto il login</string>
+    <string name="no_internet_connection">Non sei connesso a internet</string>
+    <string name="unknown_error">Errore sconosciuto</string>
+    <string name="unknown_sign_in_response">Risposta sconosciuta</string>
 </resources>
