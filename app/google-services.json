@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "18183355600-tj6b9qko23korlm52t9n5e36upl3vlnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.communikein.waveonthego",
+            "certificate_hash": "aff803281dfdebefe361716f46842e473b29bdaa"
+          }
+        },
+        {
           "client_id": "18183355600-u2rbd7sj6pa70e346t1ofk0pav7oent3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "it.communikein.waveonthego",
-            "certificate_hash": "3EF3619BF4F9AF36DD4E14BF588EEFDD48BB3D92"
+            "certificate_hash": "3ef3619bf4f9af36dd4e14bf588eefdd48bb3d92"
           }
         },
         {
@@ -27,7 +35,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "it.communikein.waveonthego",
-            "certificate_hash": "6668FC3ADEC7AE4E367B9D5EFCD2CCC7BD17989D"
+            "certificate_hash": "6668fc3adec7ae4e367b9d5efcd2ccc7bd17989d"
           }
         },
         {

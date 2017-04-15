@@ -24,6 +24,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import it.communikein.waveonthego.datatype.Event;
+
 public class EventDetailsActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 

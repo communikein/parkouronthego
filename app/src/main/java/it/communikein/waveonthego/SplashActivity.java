@@ -21,9 +21,18 @@ public class SplashActivity extends AppCompatActivity {
 
     View imageView;
 
+    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            e.printStackTrace();
+            e.getMessage();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(handler);
         setContentView(R.layout.activity_splash);
 
         imageView = findViewById(R.id.app_icon);
@@ -36,14 +45,14 @@ public class SplashActivity extends AppCompatActivity {
             // For a list of all scopes, see:
             // https://developers.google.com/identity/protocols/googlescopes
             AuthUI.IdpConfig googleIdp = new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                    .setPermissions(Arrays.asList(Scopes.PROFILE))
+                    .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL))
                     .build();
 
             // For a list of permissions see:
             // https://developers.facebook.com/docs/facebook-login/android
             // https://developers.facebook.com/docs/facebook-login/permissions
             AuthUI.IdpConfig facebookIdp = new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                    .setPermissions(Arrays.asList("user_friends"))
+                    .setPermissions(Arrays.asList("public_profile", "email"))
                     .build();
 
             // not signed in

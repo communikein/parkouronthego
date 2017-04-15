@@ -21,6 +21,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +32,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+
+import it.communikein.waveonthego.datatype.Event;
+import it.communikein.waveonthego.db.DBHandler;
 
 /**
  *
@@ -41,8 +46,9 @@ public class EventsFragment extends Fragment {
     private LoginButton mFBLoginButton;
 
     CallbackManager mCallbackManager;
-    private EventAdapter mAdapter;
     private RecyclerView mRecyclerView;
+    private FirebaseEventListAdapter mAdapter;
+    private DatabaseReference ref;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -65,6 +71,7 @@ public class EventsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ARTICLES);
         initUI(view);
     }
 
@@ -75,31 +82,29 @@ public class EventsFragment extends Fragment {
         mFBLoginButton.setFragment(this);
         setFacebookLoginButton();
 
-        ArrayList<Event> temp = new ArrayList<>();
         // specify an adapter (see also next example)
-        mAdapter = new EventAdapter(temp);
-        mAdapter.setOnItemClickListener(new EventAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Event event) {
-                onEventClick(event);
-            }
-        });
+        mAdapter = new FirebaseEventListAdapter(Event.class, EventViewHolder.class, ref);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
 
         if (isLoggedIn()) {
             mFBLoginButton.setVisibility(View.GONE);
-            getNews();
+            getEvents();
         }
         else
             mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
-    private void getNews() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
+    }
+
+    private void getEvents() {
         if (isLoggedIn()) {
             /* make the API call */
             new GraphRequest(
@@ -112,7 +117,8 @@ public class EventsFragment extends Fragment {
                         /* handle the result */
                             ArrayList<Event> events = parseFBResponse(response.getJSONObject());
 
-                            updateView(events);
+                            for (Event event : events)
+                                DBHandler.getInstance().writeToEvents(event);
                         }
                     }
             ).executeAsync();
@@ -130,6 +136,7 @@ public class EventsFragment extends Fragment {
             for (int i=0; i<array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
 
+                String id = obj.getString("id");
                 String name = obj.getString("name");
                 String description = obj.getString("description");
                 String startFB = obj.getString("start_time");
@@ -159,7 +166,7 @@ public class EventsFragment extends Fragment {
                         coords = null;
                 }
 
-                ris.add(new Event(name, description, location, coords, start, end));
+                ris.add(new Event(id, name, description, location, coords, start, end));
             }
         } catch (JSONException | ParseException e) {
             FirebaseCrash.report(e);
@@ -167,12 +174,6 @@ public class EventsFragment extends Fragment {
         }
 
         return ris;
-    }
-
-    private void updateView(ArrayList<Event> events) {
-        mAdapter.clear();
-        mAdapter.addAll(events);
-        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -189,7 +190,7 @@ public class EventsFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 mFBLoginButton.setVisibility(View.GONE);
-                getNews();
+                getEvents();
             }
 
             @Override

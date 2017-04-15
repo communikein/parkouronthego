@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,11 +29,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import it.communikein.waveonthego.datatype.Article;
+import it.communikein.waveonthego.db.DBHandler;
+
 public class NewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
-    private ArticleAdapter mAdapter;
+    private FirebaseArticleListAdapter mAdapter;
+    private DatabaseReference ref;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -54,30 +60,28 @@ public class NewsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initUI(view);
+        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ARTICLES);
 
-        getNews();
+        initUI(view);
+        getNews(ref);
     }
 
     private void initUI(View view) {
-        ArrayList<Article> temp = new ArrayList<>();
-        // specify an adapter (see also next example)
-        mAdapter = new ArticleAdapter(temp);
+        mAdapter = new FirebaseArticleListAdapter(Article.class, ArticleViewHolder.class, ref);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void updateView(ArrayList<Article> news) {
-        mAdapter.clear();
-        mAdapter.addAll(news);
-        mAdapter.notifyDataSetChanged();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
     }
 
-    private void getNews() {
+    private void getNews(final DatabaseReference ref) {
         (new AsyncTask<Void, Integer, ArrayList<Article>>() {
             @Override
             protected ArrayList<Article> doInBackground(Void... params) {
@@ -85,6 +89,9 @@ public class NewsFragment extends Fragment {
 
                 try {
                     ris = downloadNews();
+
+                    for (Article article : ris)
+                        DBHandler.getInstance().writeToArticles(article);
                 } catch (IOException | ParseException e) {
                     ris = new ArrayList<>();
                 }
@@ -95,8 +102,6 @@ public class NewsFragment extends Fragment {
             @Override
             protected void onPostExecute(ArrayList<Article> s) {
                 super.onPostExecute(s);
-
-                updateView(s);
             }
         }).execute();
     }
@@ -121,6 +126,7 @@ public class NewsFragment extends Fragment {
             Elements els = doc.select("article.post");
 
             for (Element el : els) {
+                String postID = el.id();
                 Element post = el.select("div.post_text_inner").first();
 
                 String title = post.select("h4").first().text();
@@ -130,7 +136,7 @@ public class NewsFragment extends Fragment {
                 dateStr = dateStr.substring(dateStr.indexOf("on") + 3);
                 Date date = Article.dateFormat.parse(dateStr);
 
-                ris.add(new Article(title, summary, URL, date));
+                ris.add(new Article(postID, title, summary, URL, date));
             }
         }
 
