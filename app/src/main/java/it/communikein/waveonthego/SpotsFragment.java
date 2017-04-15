@@ -33,6 +33,7 @@ public class SpotsFragment extends Fragment {
         public void uncaughtException(Thread thread, Throwable ex) {
             ex.printStackTrace();
             FirebaseCrash.report(ex);
+            ex.getMessage();
         }
     };
 

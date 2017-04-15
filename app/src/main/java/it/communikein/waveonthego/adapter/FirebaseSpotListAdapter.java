@@ -23,7 +23,7 @@ public class FirebaseSpotListAdapter extends FirebaseRecyclerAdapter<Spot, SpotV
      */
     public FirebaseSpotListAdapter(Class<Spot> modelClass,
                              Class<SpotViewHolder> viewHolderClass, Query ref) {
-        super(modelClass, R.layout.entry_layout_events, viewHolderClass, ref);
+        super(modelClass, R.layout.entry_layout_spot, viewHolderClass, ref);
     }
 
     @Override

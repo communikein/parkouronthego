@@ -2,6 +2,7 @@ package it.communikein.waveonthego.datatype;
 
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 /**
@@ -9,14 +10,22 @@ import com.google.firebase.database.PropertyName;
  * Created by Elia Maracani on 15/04/2017.
  */
 public class Spot {
+
+    @Exclude
+    public static final double ERROR_COORDS = -1;
+
     @PropertyName("id")
     private String mID;
     @PropertyName("name")
     private String mName;
     @PropertyName("location")
     private String mLocation;
-    @PropertyName("coords")
+    @Exclude
     private LatLng mCoords;
+    @PropertyName("latitude")
+    private double latitude = ERROR_COORDS;
+    @PropertyName("longitude")
+    private double longitude = ERROR_COORDS;
     @PropertyName("description")
     private String mDescription;
 
@@ -26,10 +35,10 @@ public class Spot {
     }
 
     public Spot(String name, String description, String location, LatLng coords) {
-        this.mName = name;
-        this.mDescription = description;
-        this.mLocation = location;
-        this.mCoords = coords;
+        setName(name);
+        setDescription(description);
+        setLocation(location);
+        setCoords(coords);
     }
 
     @PropertyName("id")
@@ -72,13 +81,43 @@ public class Spot {
         this.mLocation = location;
     }
 
-    @PropertyName("coords")
+    @Exclude
     public LatLng getCoords() {
         return mCoords;
     }
 
-    @PropertyName("coords")
+    @Exclude
     public void setCoords(LatLng coords) {
         this.mCoords = coords;
+        if (coords != null) {
+            this.latitude = coords.latitude;
+            this.longitude = coords.longitude;
+        }
+    }
+
+    @PropertyName("latitude")
+    public double getLatitude() {
+        return latitude;
+    }
+
+    @PropertyName("latitude")
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+
+        if (getLongitude() != ERROR_COORDS)
+            setCoords(new LatLng(getLatitude(), getLongitude()));
+    }
+
+    @PropertyName("longitude")
+    public double getLongitude() {
+        return longitude;
+    }
+
+    @PropertyName("longitude")
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+
+        if (getLatitude() != ERROR_COORDS)
+            setCoords(new LatLng(getLatitude(), getLongitude()));
     }
 }

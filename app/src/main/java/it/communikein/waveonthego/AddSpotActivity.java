@@ -47,6 +47,7 @@ public class AddSpotActivity extends AppCompatActivity {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
+            FirebaseCrash.report(e);
             e.getMessage();
         }
     };
@@ -168,6 +169,8 @@ public class AddSpotActivity extends AppCompatActivity {
             Spot spot = new Spot(name, description, location, coords);
 
             DBHandler.getInstance().writeToSpots(spot);
+            finish();
+            return;
         }
 
         if (errorView != null)

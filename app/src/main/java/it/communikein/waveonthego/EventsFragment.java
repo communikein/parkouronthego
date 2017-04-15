@@ -56,6 +56,7 @@ public class EventsFragment extends Fragment {
         public void uncaughtException(Thread thread, Throwable ex) {
             ex.printStackTrace();
             FirebaseCrash.report(ex);
+            ex.getMessage();
         }
     };
 
@@ -72,7 +73,7 @@ public class EventsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ARTICLES);
+        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_EVENTS);
         initUI(view);
 
         if (isLoggedIn()) {

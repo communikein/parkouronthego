@@ -39,7 +39,9 @@
         <activity
             android:name=".EventDetailsActivity"
             android:label="@string/title_event_details" />
-        <activity android:name=".AddSpotActivity"></activity>
+        <activity
+            android:name=".AddSpotActivity"
+            android:label="@string/title_activity_add_spot"/>
     </application>
 
 </manifest>
