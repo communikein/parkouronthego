@@ -29,8 +29,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import it.communikein.waveonthego.adapter.FirebaseArticleListAdapter;
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.db.DBHandler;
+import it.communikein.waveonthego.views.ArticleViewHolder;
 
 /**
  *

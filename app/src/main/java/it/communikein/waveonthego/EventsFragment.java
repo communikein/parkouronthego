@@ -33,8 +33,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import it.communikein.waveonthego.adapter.FirebaseEventListAdapter;
 import it.communikein.waveonthego.datatype.Event;
 import it.communikein.waveonthego.db.DBHandler;
+import it.communikein.waveonthego.views.EventViewHolder;
 
 /**
  *

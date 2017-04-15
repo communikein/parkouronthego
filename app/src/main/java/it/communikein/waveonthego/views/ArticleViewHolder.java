@@ -1,17 +1,19 @@
-package it.communikein.waveonthego;
+package it.communikein.waveonthego.views;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import it.communikein.waveonthego.R;
+
 /**
  *
  * Created by Elia Maracani on 15/04/2017.
  */
-class ArticleViewHolder extends RecyclerView.ViewHolder {
-    final TextView mTitleTextView;
-    final TextView mSummaryTextView;
-    final TextView mDateTextView;
+public class ArticleViewHolder extends RecyclerView.ViewHolder {
+    public final TextView mTitleTextView;
+    public final TextView mSummaryTextView;
+    public final TextView mDateTextView;
 
     ArticleViewHolder(View v) {
         super(v);

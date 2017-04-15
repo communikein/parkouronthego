@@ -10,6 +10,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.datatype.Event;
+import it.communikein.waveonthego.datatype.Spot;
 
 /**
  * Created by eliam on 15/04/2017.
@@ -50,5 +51,9 @@ public class DBHandler {
 
     public void writeToEvents(Event event){
         refEvents.child(event.getID()).setValue(event);
+    }
+
+    public void writeToSpots(Spot spot){
+        refSpots.push().setValue(spot);
     }
 }

@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_dashboard:
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.content, new SpotsFragment())
+                            .commit();
                     return true;
             }
             return false;
