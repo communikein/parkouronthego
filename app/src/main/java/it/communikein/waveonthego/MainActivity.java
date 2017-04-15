@@ -17,11 +17,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    FirebaseUser user;
-    String token;
+    private Toolbar toolbar;
+    private FirebaseUser user;
+    private String token;
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         return intent;
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override

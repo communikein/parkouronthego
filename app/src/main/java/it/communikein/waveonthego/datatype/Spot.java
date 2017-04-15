@@ -12,7 +12,7 @@ import com.google.firebase.database.PropertyName;
 public class Spot {
 
     @Exclude
-    public static final double ERROR_COORDS = -1;
+    private static final double ERROR_COORDS = -1;
 
     @PropertyName("id")
     private String mID;
@@ -57,7 +57,7 @@ public class Spot {
     }
 
     @PropertyName("name")
-    public void setName(String name) {
+    private void setName(String name) {
         this.mName = name;
     }
 
@@ -67,7 +67,7 @@ public class Spot {
     }
 
     @PropertyName("description")
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.mDescription = description;
     }
 
@@ -77,7 +77,7 @@ public class Spot {
     }
 
     @PropertyName("location")
-    public void setLocation(String location) {
+    private void setLocation(String location) {
         this.mLocation = location;
     }
 
@@ -87,7 +87,7 @@ public class Spot {
     }
 
     @Exclude
-    public void setCoords(LatLng coords) {
+    private void setCoords(LatLng coords) {
         this.mCoords = coords;
         if (coords != null) {
             this.latitude = coords.latitude;
@@ -96,7 +96,7 @@ public class Spot {
     }
 
     @PropertyName("latitude")
-    public double getLatitude() {
+    private double getLatitude() {
         return latitude;
     }
 
@@ -109,7 +109,7 @@ public class Spot {
     }
 
     @PropertyName("longitude")
-    public double getLongitude() {
+    private double getLongitude() {
         return longitude;
     }
 

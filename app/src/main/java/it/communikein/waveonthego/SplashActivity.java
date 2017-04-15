@@ -19,9 +19,9 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final int REQUEST_FIREBASE_SIGN_IN = 123;
 
-    View imageView;
+    private View imageView;
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();

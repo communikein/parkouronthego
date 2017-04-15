@@ -67,7 +67,7 @@ public class NewsFragment extends Fragment {
         ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ARTICLES);
 
         initUI(view);
-        getNews(ref);
+        getNews();
     }
 
     private void initUI(View view) {
@@ -85,7 +85,7 @@ public class NewsFragment extends Fragment {
         mAdapter.cleanup();
     }
 
-    private void getNews(final DatabaseReference ref) {
+    private void getNews() {
         (new AsyncTask<Void, Integer, ArrayList<Article>>() {
             @Override
             protected ArrayList<Article> doInBackground(Void... params) {
@@ -111,7 +111,7 @@ public class NewsFragment extends Fragment {
     }
 
 
-    public static ArrayList<Article> downloadNews() throws IOException, ParseException {
+    private static ArrayList<Article> downloadNews() throws IOException, ParseException {
         ArrayList<Article> ris = new ArrayList<>();
         boolean errorOccured;
         HttpURLConnection result = getPage("http://www.parkourwave.com/en/blog/");
@@ -147,7 +147,7 @@ public class NewsFragment extends Fragment {
         return ris;
     }
 
-    public static HttpURLConnection getPage(String url) throws IOException {
+    private static HttpURLConnection getPage(String url) throws IOException {
         String USER_AGENT = System.getProperty("http.agent");
 
         HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
@@ -163,7 +163,7 @@ public class NewsFragment extends Fragment {
         return con;
     }
 
-    public static String getHTML(InputStream instream) throws IOException {
+    private static String getHTML(InputStream instream) throws IOException {
         BufferedReader rd;
         String ris;
         rd = new BufferedReader(new InputStreamReader(instream));

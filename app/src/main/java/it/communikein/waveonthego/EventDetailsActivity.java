@@ -29,14 +29,20 @@ import it.communikein.waveonthego.datatype.Event;
 public class EventDetailsActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    TextView name_txt, dateTime_txt, location_txt, description_txt;
-    GoogleMap mMap;
+    private TextView name_txt;
+    private TextView dateTime_txt;
+    private TextView location_txt;
+    private TextView description_txt;
+    private GoogleMap mMap;
 
-    String mLocation, mName, mDescription;
-    Date mStart, mEnd = null;
-    LatLng mCoords;
+    private String mLocation;
+    private String mName;
+    private String mDescription;
+    private Date mStart;
+    private Date mEnd = null;
+    private LatLng mCoords;
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
@@ -63,7 +69,7 @@ public class EventDetailsActivity extends AppCompatActivity
         description_txt = (TextView) findViewById(R.id.description_txt);
         description_txt.setMovementMethod(new ScrollingMovementMethod());
 
-        findViewById(R.id.action_close).setOnClickListener(new View.OnClickListener() {
+        name_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

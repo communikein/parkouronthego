@@ -77,7 +77,7 @@ public class Article {
     }
 
     @PropertyName("date_publish")
-    public Date getDatePublish() {
+    private Date getDatePublish() {
         return mDatePublish;
     }
 

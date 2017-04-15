@@ -21,21 +21,14 @@
                     android:layout_width="match_parent" android:layout_height="160dp"
                     android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-                <LinearLayout android:orientation="vertical" android:padding="10dp"
-                    android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView android:id="@+id/eventName_txt" android:gravity="center_vertical"
+                    android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="@string/label_event_name" android:textSize="25sp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:drawableStart="@drawable/ic_close"
+                    android:drawableLeft="@drawable/ic_close"
+                    android:drawablePadding="15dp"/>
 
-                    <ImageView android:id="@+id/action_close"
-                        android:layout_gravity="start|top"
-                        android:contentDescription="@null" android:background="@drawable/ic_close"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-
-                    <TextView android:id="@+id/eventName_txt" android:gravity="center_vertical"
-                        android:layout_width="wrap_content" android:layout_height="0dp"
-                        android:text="@string/label_event_name" android:textSize="25sp"
-                        android:layout_marginLeft="15dp" android:layout_marginStart="15dp"
-                        android:layout_weight="1" android:textColor="@color/colorPrimaryDark"/>
-
-                </LinearLayout>
             </FrameLayout>
 
         </android.support.design.widget.AppBarLayout>

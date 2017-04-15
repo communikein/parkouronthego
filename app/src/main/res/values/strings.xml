@@ -1,16 +1,13 @@
 <resources>
     <string name="app_name">Waves On The Move</string>
-    <string name="title_home">Home</string>
     <string name="title_news">News</string>
     <string name="title_events">Events</string>
-    <string name="title_dashboard">Spots</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_spots">Spots</string>
 
     <string name="facebook_app_id">387053925001320</string>
     <string name="fb_login_protocol_scheme">fb387053925001320</string>
 
     <string name="label_event_name">Event name</string>
-    <string name="title_activity_maps">Map</string>
 
     <string name="title_event_details">Dettagli evento</string>
     <string name="sign_in_cancelled">Hai interrotto il login</string>

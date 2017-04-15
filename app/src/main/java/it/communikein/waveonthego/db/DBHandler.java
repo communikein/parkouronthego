@@ -1,19 +1,15 @@
 package it.communikein.waveonthego.db;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.datatype.Event;
 import it.communikein.waveonthego.datatype.Spot;
 
 /**
- * Created by eliam on 15/04/2017.
+ *
+ * Created by Elia Maracani on 15/04/2017.
  */
 
 public class DBHandler {
@@ -22,10 +18,12 @@ public class DBHandler {
     public final static String DB_EVENTS = "events";
     public final static String DB_SPOTS = "spots";
 
-    public static DBHandler instance;
+    private static DBHandler instance;
 
-    FirebaseDatabase db;
-    DatabaseReference refArticles, refEvents, refSpots;
+    private FirebaseDatabase db;
+    private DatabaseReference refArticles;
+    private DatabaseReference refEvents;
+    private DatabaseReference refSpots;
 
     public static DBHandler getInstance(){
         if (instance == null)

@@ -46,7 +46,7 @@ public class EventsFragment extends Fragment {
 
     private LoginButton mFBLoginButton;
 
-    CallbackManager mCallbackManager;
+    private CallbackManager mCallbackManager;
 
     private FirebaseEventListAdapter mAdapter;
     private DatabaseReference ref;
@@ -207,7 +207,7 @@ public class EventsFragment extends Fragment {
         });
     }
 
-    public boolean isLoggedIn() {
+    private boolean isLoggedIn() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         return accessToken != null;
     }

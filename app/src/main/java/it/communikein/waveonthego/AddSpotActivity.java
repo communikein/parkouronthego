@@ -32,7 +32,7 @@ public class AddSpotActivity extends AppCompatActivity {
 
     private final int PLACE_PICKER_REQUEST = 23;
     private final int RC_LOCATION = 24;
-    String[] perms_location = {Manifest.permission.ACCESS_FINE_LOCATION,
+    private final String[] perms_location = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
 
     private Toolbar toolbar;
@@ -43,7 +43,7 @@ public class AddSpotActivity extends AppCompatActivity {
     private boolean allowed = false;
     private LatLng coords = null;
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
@@ -152,7 +152,7 @@ public class AddSpotActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(location_txt.getText()))
             location = location_txt.getText().toString();
 
-        View errorView = null;
+        View errorView;
         if (name == null) {
             name_txt.setError(getString(R.string.error_name_missing));
             errorView = name_txt;

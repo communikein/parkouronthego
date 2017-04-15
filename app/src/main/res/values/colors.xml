@@ -5,10 +5,6 @@
     <color name="colorPrimaryLight">#30B324</color>
     <color name="colorAccent">#0022C9</color>
 
-    <color name="today">#4b82ff</color>
-    <color name="greyed_out">#c7c7c7</color>
-    <color name="green">#195714</color>
-
     <color name="primary_text">#212121</color>
     <color name="textPrimaryColor">@color/primary_text</color>
     <color name="secondary_text">#727272</color>

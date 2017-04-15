@@ -4,11 +4,11 @@
     <item
         android:id="@+id/navigation_spots"
         android:icon="@drawable/ic_place"
-        android:title="@string/title_dashboard"/>
+        android:title="@string/title_spots"/>
 
     <item
         android:id="@+id/navigation_news"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_notifications"
         android:title="@string/title_news"/>
 
     <item

@@ -7,7 +7,8 @@ import android.widget.TextView;
 import it.communikein.waveonthego.R;
 
 /**
- * Created by eliam on 15/04/2017.
+ *
+ * Created by Elia Maracani on 15/04/2017.
  */
 
 public class SpotViewHolder extends RecyclerView.ViewHolder {

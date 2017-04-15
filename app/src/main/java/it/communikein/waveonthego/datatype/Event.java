@@ -15,7 +15,7 @@ import java.util.Date;
 public class Event {
 
     @Exclude
-    public static final double ERROR_COORDS = -1;
+    private static final double ERROR_COORDS = -1;
 
     @PropertyName("id")
     private String mID;
@@ -58,7 +58,7 @@ public class Event {
     }
 
     @PropertyName("id")
-    public void setID(String id) {
+    private void setID(String id) {
         this.mID = id;
     }
 
@@ -68,7 +68,7 @@ public class Event {
     }
 
     @PropertyName("name")
-    public void setName(String name) {
+    private void setName(String name) {
         this.mName = name;
     }
 
@@ -78,7 +78,7 @@ public class Event {
     }
 
     @PropertyName("description")
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.mDescription = description;
     }
 
@@ -88,7 +88,7 @@ public class Event {
     }
 
     @PropertyName("location")
-    public void setLocation(String location) {
+    private void setLocation(String location) {
         this.mLocation = location;
     }
 
@@ -98,7 +98,7 @@ public class Event {
     }
 
     @Exclude
-    public void setCoords(LatLng coords) {
+    private void setCoords(LatLng coords) {
         this.mCoords = coords;
         if (coords != null) {
             this.latitude = coords.latitude;
@@ -107,7 +107,7 @@ public class Event {
     }
 
     @PropertyName("latitude")
-    public double getLatitude() {
+    private double getLatitude() {
         return latitude;
     }
 
@@ -120,7 +120,7 @@ public class Event {
     }
 
     @PropertyName("longitude")
-    public double getLongitude() {
+    private double getLongitude() {
         return longitude;
     }
 
@@ -138,7 +138,7 @@ public class Event {
     }
 
     @PropertyName("date_start")
-    public void setDateStart(Date start) {
+    private void setDateStart(Date start) {
         this.mDateStart = start;
     }
 
@@ -148,7 +148,7 @@ public class Event {
     }
 
     @PropertyName("date_end")
-    public void setDateEnd(Date end) {
+    private void setDateEnd(Date end) {
         this.mDateEnd = end;
     }
 
