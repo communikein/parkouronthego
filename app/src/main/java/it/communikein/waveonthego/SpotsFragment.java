@@ -1,9 +1,11 @@
 package it.communikein.waveonthego;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,7 @@ import it.communikein.waveonthego.views.SpotViewHolder;
  *
  * Created by Elia Maracani on 15/04/2017.
  */
-public class SpotsFragment extends android.support.v4.app.Fragment {
+public class SpotsFragment extends Fragment {
 
     private FirebaseSpotListAdapter mAdapter;
     private DatabaseReference ref;
@@ -69,7 +71,7 @@ public class SpotsFragment extends android.support.v4.app.Fragment {
     }
 
     private void doAddSpot(){
-
+        startActivity(new Intent(getActivity(), AddSpotActivity.class));
     }
 
     @Override

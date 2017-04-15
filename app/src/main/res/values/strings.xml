@@ -3,7 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_news">News</string>
     <string name="title_events">Events</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_dashboard">Spots</string>
     <string name="title_notifications">Notifications</string>
 
     <string name="facebook_app_id">387053925001320</string>
@@ -17,4 +17,9 @@
     <string name="no_internet_connection">Non sei connesso a internet</string>
     <string name="unknown_error">Errore sconosciuto</string>
     <string name="unknown_sign_in_response">Risposta sconosciuta</string>
+    <string name="error_name_missing">Inserire il nome</string>
+    <string name="error_description_missing">Inserire la descrizione</string>
+    <string name="error_position_missing">Inserire la posizione</string>
+    <string name="error_location_permission">Ho bisogno della tua posizione</string>
+    <string name="title_activity_add_spot">Aggiungi spot</string>
 </resources>

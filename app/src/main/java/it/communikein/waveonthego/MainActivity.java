@@ -21,9 +21,18 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser user;
     String token;
 
+    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            e.printStackTrace();
+            e.getMessage();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(handler);
         setContentView(R.layout.activity_main);
 
         initAppBar();
@@ -63,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             switch (item.getItemId()) {
+                case R.id.navigation_spots:
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.content, new SpotsFragment())
+                            .commit();
+                    return true;
                 case R.id.navigation_news:
                     fragmentManager.beginTransaction()
                             .replace(R.id.content, new NewsFragment())
@@ -71,11 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_events:
                     fragmentManager.beginTransaction()
                             .replace(R.id.content, new EventsFragment())
-                            .commit();
-                    return true;
-                case R.id.navigation_dashboard:
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.content, new SpotsFragment())
                             .commit();
                     return true;
             }

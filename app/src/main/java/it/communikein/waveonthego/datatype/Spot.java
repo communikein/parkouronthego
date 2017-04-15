@@ -25,8 +25,7 @@ public class Spot {
         // Needed for Firebase
     }
 
-    public Spot(String id, String name, String description, String location, LatLng coords) {
-        this.mID = id;
+    public Spot(String name, String description, String location, LatLng coords) {
         this.mName = name;
         this.mDescription = description;
         this.mLocation = location;
