@@ -1,6 +1,8 @@
 package it.communikein.waveonthego;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -8,14 +10,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.EditText;
 
@@ -36,6 +40,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -279,26 +284,76 @@ public class AddSpotActivity extends AppCompatActivity implements
                     spot.getID() + "/" + uri.getLastPathSegment());
             UploadTask upload = newImageRef.putFile(uri);
 
+            // Sets an ID for the notification, so it can be updated
+            SparseArray<String> notifications = ((MainActivity) getParent())
+                    .imagesNotificationUpload;
+            final int newID = notifications.keyAt(notifications.size() - 1) + 1;
+
+            final NotificationManager mNotificationManager = uploadNotification(newID);
+
             // Register observers to listen for when the download is done or if it fails
             upload.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = 100 * taskSnapshot.getBytesTransferred() /
-                            taskSnapshot.getTotalByteCount();
+                    int progress = 100 * (int) (taskSnapshot.getBytesTransferred() /
+                            taskSnapshot.getTotalByteCount());
+
+                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
+                            .setContentTitle(getString(R.string.uploading))
+                            .setContentText(getString(R.string.uploading_image))
+                            .setSmallIcon(R.drawable.ic_image)
+                            .setProgress(100, progress, true);
+
+                    // Because the ID remains unchanged, the existing notification is
+                    // updated.
+                    mNotificationManager.notify(
+                            newID,
+                            mNotifyBuilder.build());
                 }
             }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
+                            .setContentTitle(getString(R.string.uploading))
+                            .setContentText(getString(R.string.upload_paused))
+                            .setSmallIcon(R.drawable.ic_image);
 
+                    // Because the ID remains unchanged, the existing notification is
+                    // updated.
+                    mNotificationManager.notify(
+                            newID,
+                            mNotifyBuilder.build());
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     FirebaseCrash.report(exception);
+
+                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
+                            .setContentTitle(getString(R.string.uploading))
+                            .setContentText(getString(R.string.upload_failed))
+                            .setSmallIcon(R.drawable.ic_image);
+
+                    // Because the ID remains unchanged, the existing notification is
+                    // updated.
+                    mNotificationManager.notify(
+                            newID,
+                            mNotifyBuilder.build());
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
+                            .setContentTitle(getString(R.string.uploading))
+                            .setContentText(getString(R.string.upload_completed))
+                            .setSmallIcon(R.drawable.ic_image);
+
+                    // Because the ID remains unchanged, the existing notification is
+                    // updated.
+                    mNotificationManager.notify(
+                            newID,
+                            mNotifyBuilder.build());
+
                     String cloudPath = taskSnapshot.getMetadata().getReference().getPath();
 
                     spot.addImage(cloudPath);
@@ -363,5 +418,21 @@ public class AddSpotActivity extends AppCompatActivity implements
         public CharSequence getPageTitle(int position) {
             return null;
         }
+    }
+
+    private NotificationManager uploadNotification(int id) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle(getString(R.string.uploading))
+                .setContentText(getString(R.string.uploading_image))
+                .setSmallIcon(R.drawable.ic_image);
+
+        // Because the ID remains unchanged, the existing notification is
+        // updated.
+        mNotificationManager.notify(id, mNotifyBuilder.build());
+
+        return mNotificationManager;
     }
 }

@@ -23,4 +23,9 @@
     <string name="permission_storage_reason">Ho bisogno di accedere alle tue immagini</string>
     <string name="delete_media">Rimuovi immagine</string>
     <string name="confirm_remove_media">Sei sicuro di voler rimuovere questa immagine?</string>
+    <string name="uploading">Upload</string>
+    <string name="uploading_image">Caricamento immagine</string>
+    <string name="upload_paused">Upload in pausa</string>
+    <string name="upload_failed">Upload fallito.</string>
+    <string name="upload_completed">Upload completato!</string>
 </resources>
