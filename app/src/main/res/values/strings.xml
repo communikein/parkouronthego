@@ -19,4 +19,8 @@
     <string name="error_position_missing">Inserire la posizione</string>
     <string name="error_location_permission">Ho bisogno della tua posizione</string>
     <string name="title_activity_add_spot">Aggiungi spot</string>
+    <string name="select_image">Scegli immagine</string>
+    <string name="permission_storage_reason">Ho bisogno di accedere alle tue immagini</string>
+    <string name="delete_media">Rimuovi immagine</string>
+    <string name="confirm_remove_media">Sei sicuro di voler rimuovere questa immagine?</string>
 </resources>

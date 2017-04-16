@@ -13,20 +13,13 @@
 
         <android.support.design.widget.AppBarLayout android:id="@+id/app_bar"
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_width="match_parent" android:layout_height="150dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:fitsSystemWindows="true">
 
             <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
                 android:layout_height="wrap_content" android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize" android:background="@color/colorPrimary" />
-
-        </android.support.design.widget.AppBarLayout>
-
-        <LinearLayout android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="15dp">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -40,6 +33,16 @@
                     android:hint="Name" />
 
             </android.support.design.widget.TextInputLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+
+            <android.support.v4.view.ViewPager android:id="@+id/containerMedia"
+                android:layout_width="match_parent" android:layout_height="180dp"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -79,5 +82,15 @@
         app:srcCompat="@drawable/ic_done"
         android:layout_margin="15dp"
         android:layout_gravity="bottom|end"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_images"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_image"
+        app:layout_anchorGravity="bottom|end"
+        app:layout_anchor="@id/app_bar"/>
 
 </android.support.design.widget.CoordinatorLayout>

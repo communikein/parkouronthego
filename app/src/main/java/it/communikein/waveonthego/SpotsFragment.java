@@ -23,7 +23,8 @@ import it.communikein.waveonthego.views.SpotViewHolder;
  *
  * Created by Elia Maracani on 15/04/2017.
  */
-public class SpotsFragment extends Fragment {
+public class SpotsFragment extends Fragment
+        implements FirebaseSpotListAdapter.OnItemClick {
 
     private FirebaseSpotListAdapter mAdapter;
     private DatabaseReference ref;
@@ -57,6 +58,7 @@ public class SpotsFragment extends Fragment {
 
     private void initUI(View view) {
         mAdapter = new FirebaseSpotListAdapter(Spot.class, SpotViewHolder.class, ref);
+        mAdapter.setOnItemClickListener(SpotsFragment.this);
 
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -79,5 +81,12 @@ public class SpotsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+    }
+
+    @Override
+    public void onItemClick(Spot spot) {
+        Intent intent = new Intent(getActivity(), SpotDetailsActivity.class);
+        intent.putExtra(Spot.SPOT, spot.toJSON().toString());
+        startActivity(intent);
     }
 }

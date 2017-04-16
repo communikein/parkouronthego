@@ -12,8 +12,12 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+
+import it.communikein.waveonthego.db.DBHandler;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -21,10 +25,11 @@ public class SplashActivity extends AppCompatActivity {
 
     private View imageView;
 
-    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
+            FirebaseCrash.report(e);
             e.getMessage();
         }
     };
@@ -37,6 +42,8 @@ public class SplashActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.app_icon);
 
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        DBHandler.getInstance().setupDB();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             // already signed in

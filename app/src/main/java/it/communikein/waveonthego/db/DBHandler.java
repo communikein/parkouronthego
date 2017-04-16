@@ -3,6 +3,9 @@ package it.communikein.waveonthego.db;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.datatype.Event;
 import it.communikein.waveonthego.datatype.Spot;
@@ -43,6 +46,16 @@ public class DBHandler {
             refSpots = db.getReference(DB_SPOTS);
     }
 
+    public DBHandler setupDB() {
+        DBHandler handler = DBHandler.getInstance();
+
+        refArticles.keepSynced(true);
+        refEvents.keepSynced(true);
+        refSpots.keepSynced(true);
+
+        return handler;
+    }
+
     public void writeToArticles(Article article){
         refArticles.child(article.getID()).setValue(article);
     }
@@ -51,7 +64,21 @@ public class DBHandler {
         refEvents.child(event.getID()).setValue(event);
     }
 
-    public void writeToSpots(Spot spot){
-        refSpots.push().setValue(spot);
+    public String writeToSpots(Spot spot){
+        String key = refSpots.push().getKey();
+        refSpots.child(key).setValue(spot);
+
+        return key;
+    }
+
+    public void updateSpot(Spot spot) {
+        if (spot.getID() != null) {
+            Map<String, Object> postValues = spot.toMap();
+
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(spot.getID(), postValues);
+
+            refSpots.updateChildren(childUpdates);
+        }
     }
 }

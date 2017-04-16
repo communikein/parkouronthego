@@ -48,6 +48,7 @@ public class NewsFragment extends Fragment {
         public void uncaughtException(Thread thread, Throwable ex) {
             ex.printStackTrace();
             FirebaseCrash.report(ex);
+            ex.printStackTrace();
         }
     };
 

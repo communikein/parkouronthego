@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        navigation.setSelectedItemId(R.id.navigation_news);
+        navigation.setSelectedItemId(R.id.navigation_spots);
     }
 
     private void parseData(Intent intent) {
