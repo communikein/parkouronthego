@@ -1,8 +1,13 @@
 package it.communikein.waveonthego.datatype;
 
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
 import java.util.Date;
 
 import it.communikein.waveonthego.Utils;
@@ -12,6 +17,7 @@ import it.communikein.waveonthego.Utils;
  * Created by Elia Maracani on 17/02/2017.
  */
 public class Article {
+
     @PropertyName("id")
     private String mID;
     @PropertyName("title")
@@ -22,7 +28,6 @@ public class Article {
     private String mUrlFullArticle;
     @PropertyName("date_publish")
     private Date mDatePublish;
-
 
     public Article() {
         // Needed for Firebase
@@ -77,7 +82,7 @@ public class Article {
     }
 
     @PropertyName("date_publish")
-    private Date getDatePublish() {
+    public Date getDatePublish() {
         return mDatePublish;
     }
 
@@ -86,8 +91,52 @@ public class Article {
         this.mDatePublish = datePublish;
     }
 
-
+    @Exclude
     public String printDate() {
         return Utils.dayMonthFormat.format(getDatePublish());
+    }
+
+    @Exclude
+    public JSONObject toJSON() {
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("id", getID());
+            obj.put("title", getTitle());
+            obj.put("summary", getSummary());
+            obj.put("url_full_article", getUrlFullArticle());
+            obj.put("date_publish", Utils.dayMonthYearFormat.format(getDatePublish()));
+        } catch (JSONException e) {
+            obj = new JSONObject();
+        }
+
+        return obj;
+    }
+
+
+    @Exclude
+    public static Article fromJSON(JSONObject obj) {
+        Article article = null;
+
+        if (obj != null) {
+            try {
+                article  = new Article();
+                if (obj.has("id"))
+                    article.setID(obj.getString("id"));
+                if (obj.has("title"))
+                    article.setTitle(obj.getString("title"));
+                if (obj.has("summary"))
+                    article.setSummary(obj.getString("summary"));
+                if (obj.has("url_full_article"))
+                    article.setUrlFullArticle(obj.getString("url_full_article"));
+                if (obj.has("date_publish"))
+                    article.setDatePublish(Utils.dayMonthYearFormat
+                            .parse(obj.getString("date_publish")));
+            } catch (JSONException | ParseException e) {
+                article = null;
+            }
+        }
+
+        return article;
     }
 }

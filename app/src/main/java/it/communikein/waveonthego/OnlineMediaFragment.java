@@ -1,7 +1,6 @@
 package it.communikein.waveonthego;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,12 +14,26 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 public class OnlineMediaFragment extends android.support.v4.app.Fragment {
 
     private static final String ARG_MEDIA = "media";
 
     private StorageReference mediaRef;
-    private ImageView mediaImage;
+
+    @BindView(R.id.imageView)
+    public ImageView mediaImage;
+    private Unbinder unbinder;
+
+    private OnMediaClick mMediaClickCallBack;
+
+    public interface OnMediaClick {
+        void onMediaClick(StorageReference media);
+    }
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -48,49 +61,38 @@ public class OnlineMediaFragment extends android.support.v4.app.Fragment {
         return fragment;
     }
 
-    public OnlineMediaFragment() {
-    }
+    public OnlineMediaFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.simple_image, container, false);
-        mediaImage = (ImageView) rootView.findViewById(R.id.imageView);
-
-        return rootView;
+        return inflater.inflate(R.layout.simple_image, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(view);
 
         Glide.with(this)
                 .using(new FirebaseImageLoader())
                 .load(mediaRef)
                 .into(mediaImage);
-
-        mediaImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callPictureDialog(getActivity());
-            }
-        });
     }
 
-    private void callPictureDialog(Context context){
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_picture_fullscreen);
-        dialog.setCancelable(true);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //unbinder.unbind();
+    }
 
-        dialog.findViewById(R.id.imageFull).setVisibility(View.VISIBLE);
-        final ImageView imageView = (ImageView) dialog.findViewById(R.id.imageFull);
+    public void setOnMediaClickListener(OnMediaClick listener) {
+        mMediaClickCallBack = listener;
+    }
 
-        Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(mediaRef)
-                .into(imageView);
-
-        //now that the dialog is set up, it's time to show it
-        dialog.show();
+    @OnClick(R.id.imageView)
+    public void fireMediaClickEvent(){
+        if (mMediaClickCallBack != null)
+            mMediaClickCallBack.onMediaClick(mediaRef);
     }
 }

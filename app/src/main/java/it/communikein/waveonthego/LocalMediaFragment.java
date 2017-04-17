@@ -1,10 +1,7 @@
 package it.communikein.waveonthego;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +12,12 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
+import butterknife.Unbinder;
+
 /**
  *
  * Created by Elia Maracani on 16/04/2017.
@@ -24,12 +27,18 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
     private static final String ARG_MEDIA = "media";
     private File media;
 
-    private ImageView mediaImage;
+    @BindView(R.id.imageView)
+    public ImageView mediaImage;
+    private Unbinder unbinder;
 
-    private OnMediaRemoved mCallBack;
+    private OnMediaClick mMediaClickCallBack;
+    private OnMediaLongClick mMediaLongClickCallBack;
 
-    public interface OnMediaRemoved {
-        void onMediaRemoved(File media);
+    public interface OnMediaClick {
+        void onMediaClick(File media);
+    }
+    public interface OnMediaLongClick {
+        void onMediaLongClick(File media);
     }
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
@@ -48,13 +57,6 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
 
         if (getArguments() != null && getArguments().getString(ARG_MEDIA) != null)
             media = new File(getArguments().getString(ARG_MEDIA));
-
-        try {
-            mCallBack = (OnMediaRemoved) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnMediaRemoved");
-        }
     }
 
     public static LocalMediaFragment newInstance(File media) {
@@ -71,11 +73,7 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.simple_image, container, false);
-        mediaImage = (ImageView) rootView.findViewById(R.id.imageView);
-
-        Glide.with(this)
-                .load(media)
-                .into(mediaImage);
+        unbinder = ButterKnife.bind(rootView);
 
         return rootView;
     }
@@ -84,46 +82,42 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mediaImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callPictureDialog(getActivity());
-            }
-        });
-
-        view.findViewById(R.id.imageView).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(getString(R.string.delete_media))
-                        .setMessage(getString(R.string.confirm_remove_media))
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                mCallBack.onMediaRemoved(media);
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-                return true;
-            }
-        });
-    }
-
-    private void callPictureDialog(Context context){
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_picture_fullscreen);
-        dialog.setCancelable(true);
-
-        dialog.findViewById(R.id.imageFull).setVisibility(View.VISIBLE);
-        final ImageView imageView = (ImageView) dialog.findViewById(R.id.imageFull);
-
         Glide.with(this)
                 .load(media)
-                .into(imageView);
+                .into(mediaImage);
 
-        //now that the dialog is set up, it's time to show it
-        dialog.show();
+
+
+        if (mMediaLongClickCallBack != null) {
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
+
+    public void setOnMediaLongClickListener(OnMediaClick listener) {
+        mMediaClickCallBack = listener;
+    }
+
+    public void setOnMediaClickListener(OnMediaLongClick listener) {
+        mMediaLongClickCallBack = listener;
+    }
+
+    @OnClick(R.id.imageView)
+    public void fireClickEvent(){
+        if (mMediaClickCallBack != null)
+            mMediaClickCallBack.onMediaClick(media);
+    }
+
+    @OnLongClick(R.id.imageView)
+    public boolean fireLongClickEvent() {
+        if (mMediaLongClickCallBack != null)
+            mMediaLongClickCallBack.onMediaLongClick(media);
+
+        return true;
     }
 }

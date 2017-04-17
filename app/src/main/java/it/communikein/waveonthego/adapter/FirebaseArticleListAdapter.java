@@ -1,6 +1,8 @@
 package it.communikein.waveonthego.adapter;
 
 
+import android.view.View;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
@@ -15,6 +17,12 @@ import it.communikein.waveonthego.views.ArticleViewHolder;
 
 public class FirebaseArticleListAdapter extends FirebaseRecyclerAdapter<Article, ArticleViewHolder> {
 
+    private OnItemClick mCallBack;
+
+    public interface OnItemClick {
+        void onItemClick(Article event);
+    }
+
     /**
      * @param modelClass      Firebase will marshall the data at a location into
      *                        an instance of a class that you provide
@@ -27,10 +35,22 @@ public class FirebaseArticleListAdapter extends FirebaseRecyclerAdapter<Article,
         super(modelClass, R.layout.entry_layout_article, viewHolderClass, ref);
     }
 
+    public void setOnItemClickListener(OnItemClick context) {
+        mCallBack = context;
+    }
+
     @Override
-    protected void populateViewHolder(ArticleViewHolder viewHolder, Article model, int position) {
+    protected void populateViewHolder(ArticleViewHolder viewHolder, final Article model, int position) {
         viewHolder.mTitleTextView.setText(model.getTitle());
         viewHolder.mSummaryTextView.setText(model.getSummary());
         viewHolder.mDateTextView.setText(model.printDate());
+
+        viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallBack != null)
+                    mCallBack.onItemClick(model);
+            }
+        });
     }
 }

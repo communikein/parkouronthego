@@ -1,6 +1,8 @@
 package it.communikein.waveonthego.adapter;
 
 
+import android.view.View;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
@@ -15,6 +17,12 @@ import it.communikein.waveonthego.views.EventViewHolder;
  */
 public class FirebaseEventListAdapter extends FirebaseRecyclerAdapter<Event, EventViewHolder> {
 
+    private OnItemClick mCallBack;
+
+    public interface OnItemClick {
+        void onItemClick(Event event);
+    }
+
     /**
      * @param modelClass      Firebase will marshall the data at a location into
      *                        an instance of a class that you provide
@@ -27,11 +35,23 @@ public class FirebaseEventListAdapter extends FirebaseRecyclerAdapter<Event, Eve
         super(modelClass, R.layout.entry_layout_events, viewHolderClass, ref);
     }
 
+    public void setOnItemClickListener(OnItemClick context) {
+        mCallBack = context;
+    }
+
     @Override
-    protected void populateViewHolder(EventViewHolder viewHolder, Event model, int position) {
+    protected void populateViewHolder(EventViewHolder viewHolder, final Event model, int position) {
         viewHolder.mNameTextView.setText(model.getName());
-        viewHolder.mLocationTextView.setText(model.getLocationString());
+        viewHolder.mLocationTextView.setText(model.getLocation());
         viewHolder.mDateTextView.setText(Event.printDate(model.getDateStart(), Utils.dayMonthFormat));
+
+        viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallBack != null)
+                    mCallBack.onItemClick(model);
+            }
+        });
     }
 }
 

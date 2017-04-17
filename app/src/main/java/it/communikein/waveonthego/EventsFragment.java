@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.communikein.waveonthego.adapter.FirebaseEventListAdapter;
 import it.communikein.waveonthego.datatype.Event;
 import it.communikein.waveonthego.db.DBHandler;
@@ -42,14 +45,17 @@ import it.communikein.waveonthego.views.EventViewHolder;
  *
  * Created by Elia Maracani on 18/02/2017.
  */
-public class EventsFragment extends Fragment {
+public class EventsFragment extends Fragment
+        implements FirebaseEventListAdapter.OnItemClick{
 
-    private LoginButton mFBLoginButton;
+    @BindView(R.id.login_button)
+    public LoginButton mFBLoginButton;
 
     private CallbackManager mCallbackManager;
 
     private FirebaseEventListAdapter mAdapter;
     private DatabaseReference ref;
+    private Unbinder unbinder;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -66,7 +72,9 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Thread.setDefaultUncaughtExceptionHandler(handler);
-        return inflater.inflate(R.layout.fragment_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_events, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -86,7 +94,6 @@ public class EventsFragment extends Fragment {
 
     private void initUI(View view) {
         mCallbackManager = CallbackManager.Factory.create();
-        mFBLoginButton = (LoginButton) view.findViewById(R.id.login_button);
         // If using in a fragment
         mFBLoginButton.setFragment(this);
         setFacebookLoginButton();
@@ -94,7 +101,7 @@ public class EventsFragment extends Fragment {
         // specify an adapter (see also next example)
         mAdapter = new FirebaseEventListAdapter(Event.class, EventViewHolder.class, ref);
 
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView mRecyclerView = ButterKnife.findById(view, R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
@@ -104,6 +111,7 @@ public class EventsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+        unbinder.unbind();
     }
 
     private void getEvents() {
@@ -212,14 +220,10 @@ public class EventsFragment extends Fragment {
         return accessToken != null;
     }
 
-    public void onEventClick(Event event) {
+    @Override
+    public void onItemClick(Event event) {
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-        intent.putExtra("LOCATION", event.getLocationString());
-        intent.putExtra("START", Event.printDate(event.getDateStart(), Utils.dateFBFormat));
-        intent.putExtra("END", Event.printDate(event.getDateEnd(), Utils.dateFBFormat));
-        intent.putExtra("NAME", event.getName());
-        intent.putExtra("DESCRIPTION", event.getDescription());
-        intent.putExtra("COORDS", event.getCoords());
+        intent.putExtra(Event.EVENT, event.toJSON().toString());
         startActivity(intent);
     }
 }

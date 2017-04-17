@@ -14,6 +14,9 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.communikein.waveonthego.adapter.FirebaseSpotListAdapter;
 import it.communikein.waveonthego.datatype.Spot;
 import it.communikein.waveonthego.db.DBHandler;
@@ -28,6 +31,7 @@ public class SpotsFragment extends Fragment
 
     private FirebaseSpotListAdapter mAdapter;
     private DatabaseReference ref;
+    private Unbinder unbinder;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -44,7 +48,10 @@ public class SpotsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Thread.setDefaultUncaughtExceptionHandler(handler);
-        return inflater.inflate(R.layout.fragment_spots, container, false);
+        View view = inflater.inflate(R.layout.fragment_spots, container, false);
+        unbinder = ButterKnife.bind(view);
+
+        return view;
     }
 
     @Override
@@ -60,20 +67,14 @@ public class SpotsFragment extends Fragment
         mAdapter = new FirebaseSpotListAdapter(Spot.class, SpotViewHolder.class, ref);
         mAdapter.setOnItemClickListener(SpotsFragment.this);
 
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView mRecyclerView = ButterKnife.findById(view, R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
-
-        view.findViewById(R.id.fab_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doAddSpot();
-            }
-        });
     }
 
-    private void doAddSpot(){
+    @OnClick(R.id.fab_add)
+    public void doAddSpot(){
         startActivity(new Intent(getActivity(), AddSpotActivity.class));
     }
 
@@ -81,6 +82,7 @@ public class SpotsFragment extends Fragment
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+        unbinder.unbind();
     }
 
     @Override

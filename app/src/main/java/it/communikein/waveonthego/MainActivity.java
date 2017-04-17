@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 
+import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,17 +34,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler(handler);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         initAppBar();
         FirebaseAuth.getInstance();
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationView navigation = ButterKnife.findById(this, R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_spots);
     }
 
     private void initAppBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
         if (toolbar != null)
             toolbar.setTitle(R.string.app_name);

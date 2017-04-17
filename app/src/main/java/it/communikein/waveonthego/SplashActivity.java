@@ -17,13 +17,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.communikein.waveonthego.db.DBHandler;
 
 public class SplashActivity extends AppCompatActivity {
 
     private static final int REQUEST_FIREBASE_SIGN_IN = 123;
 
-    private View imageView;
+    @BindView(R.id.app_icon)
+    public View imageView;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -39,8 +42,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler(handler);
         setContentView(R.layout.activity_splash);
-
-        imageView = findViewById(R.id.app_icon);
+        ButterKnife.bind(this);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         DBHandler.getInstance().setupDB();

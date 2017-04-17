@@ -47,7 +47,8 @@ public class FirebaseSpotListAdapter extends FirebaseRecyclerAdapter<Spot, SpotV
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallBack.onItemClick(model);
+                if (mCallBack != null)
+                    mCallBack.onItemClick(model);
             }
         });
     }

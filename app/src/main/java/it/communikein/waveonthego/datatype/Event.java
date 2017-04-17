@@ -5,14 +5,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import it.communikein.waveonthego.Utils;
 
 /**
  *
  * Created by Elia Maracani on 18/02/2017.
  */
 public class Event {
+
+    @Exclude
+    public static final String EVENT = "EVENT";
 
     @Exclude
     private static final double ERROR_COORDS = -1;
@@ -52,13 +61,14 @@ public class Event {
         setDateEnd(end);
     }
 
+
     @PropertyName("id")
     public String getID() {
         return mID;
     }
 
     @PropertyName("id")
-    private void setID(String id) {
+    public void setID(String id) {
         this.mID = id;
     }
 
@@ -68,7 +78,7 @@ public class Event {
     }
 
     @PropertyName("name")
-    private void setName(String name) {
+    public void setName(String name) {
         this.mName = name;
     }
 
@@ -78,17 +88,17 @@ public class Event {
     }
 
     @PropertyName("description")
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.mDescription = description;
     }
 
     @PropertyName("location")
-    public String getLocationString() {
+    public String getLocation() {
         return mLocation;
     }
 
     @PropertyName("location")
-    private void setLocation(String location) {
+    public void setLocation(String location) {
         this.mLocation = location;
     }
 
@@ -98,7 +108,7 @@ public class Event {
     }
 
     @Exclude
-    private void setCoords(LatLng coords) {
+    public void setCoords(LatLng coords) {
         this.mCoords = coords;
         if (coords != null) {
             this.latitude = coords.latitude;
@@ -107,29 +117,23 @@ public class Event {
     }
 
     @PropertyName("latitude")
-    private double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
     @PropertyName("latitude")
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-
-        if (getLongitude() != ERROR_COORDS)
-            setCoords(new LatLng(getLatitude(), getLongitude()));
     }
 
     @PropertyName("longitude")
-    private double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     @PropertyName("longitude")
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-
-        if (getLatitude() != ERROR_COORDS)
-            setCoords(new LatLng(getLatitude(), getLongitude()));
     }
 
     @PropertyName("date_start")
@@ -138,7 +142,7 @@ public class Event {
     }
 
     @PropertyName("date_start")
-    private void setDateStart(Date start) {
+    public void setDateStart(Date start) {
         this.mDateStart = start;
     }
 
@@ -148,12 +152,66 @@ public class Event {
     }
 
     @PropertyName("date_end")
-    private void setDateEnd(Date end) {
+    public void setDateEnd(Date end) {
         this.mDateEnd = end;
     }
 
 
+    @Exclude
+    public JSONObject toJSON() {
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("id", getID());
+            obj.put("name", getName());
+            obj.put("location", getLocation());
+            obj.put("latitude", getLatitude());
+            obj.put("longitude", getLongitude());
+            obj.put("date_start", printDate(getDateStart(), Utils.dateTimeFormat));
+            obj.put("date_end", printDate(getDateEnd(), Utils.dateTimeFormat));
+            obj.put("description", getDescription());
+        } catch (JSONException e) {
+            obj = new JSONObject();
+        }
+
+        return obj;
+    }
+
+
+    @Exclude
     public static String printDate(Date toPrint, SimpleDateFormat sdf) {
         return sdf.format(toPrint);
+    }
+
+    @Exclude
+    public static Event fromJSON(JSONObject obj) {
+        Event event = null;
+
+        if (obj != null) {
+            try {
+                event  = new Event();
+                if (obj.has("id"))
+                    event.setID(obj.getString("id"));
+                if (obj.has("name"))
+                    event.setName(obj.getString("name"));
+                if (obj.has("description"))
+                    event.setDescription(obj.getString("description"));
+                if (obj.has("latitude"))
+                    event.setLatitude(obj.getDouble("latitude"));
+                if (obj.has("longitude"))
+                    event.setLongitude(obj.getDouble("longitude"));
+                event.setCoords(new LatLng(event.getLatitude(), event.getLongitude()));
+                if (obj.has("location"))
+                    event.setLocation(obj.getString("location"));
+                if (obj.has("date_start"))
+                    event.setDateStart(Utils.dateTimeFormat.parse(obj.getString("date_start")));
+                if (obj.has("date_end"))
+                    event.setDateEnd(Utils.dateTimeFormat.parse(obj.getString("date_end")));
+            } catch (JSONException | ParseException e) {
+                event = null;
+            }
+        }
+
+        return event;
     }
 }

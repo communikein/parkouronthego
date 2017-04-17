@@ -1,8 +1,10 @@
 package it.communikein.waveonthego;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -21,7 +23,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -49,7 +53,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class AddSpotActivity extends AppCompatActivity implements
-        LocalMediaFragment.OnMediaRemoved {
+        LocalMediaFragment.OnMediaLongClick, LocalMediaFragment.OnMediaClick {
 
     private final int PLACE_PICKER_REQUEST = 23;
 
@@ -165,12 +169,39 @@ public class AddSpotActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMediaRemoved(File media) {
-        int pos = medias.indexOf(media);
+    public void onMediaLongClick(final File media) {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_media))
+                .setMessage(getString(R.string.confirm_remove_media))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        int pos = medias.indexOf(media);
 
-        medias.remove(pos);
-        if (medias.size() == 0) gallery.setVisibility(View.GONE);
-        mMediasPagerAdapter.notifyDataSetChanged();
+                        medias.remove(pos);
+                        if (medias.size() == 0) gallery.setVisibility(View.GONE);
+                        mMediasPagerAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    @Override
+    public void onMediaClick(final File media) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_picture_fullscreen);
+        dialog.setCancelable(true);
+
+        dialog.findViewById(R.id.imageFull).setVisibility(View.VISIBLE);
+        final ImageView imageView = (ImageView) dialog.findViewById(R.id.imageFull);
+
+        Glide.with(this)
+                .load(media)
+                .into(imageView);
+
+        //now that the dialog is set up, it's time to show it
+        dialog.show();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -364,8 +395,12 @@ public class AddSpotActivity extends AppCompatActivity implements
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            return LocalMediaFragment.newInstance(
+            LocalMediaFragment mediaFragment = LocalMediaFragment.newInstance(
                     medias.get(position));
+            mediaFragment.setOnMediaLongClickListener(AddSpotActivity.this);
+            mediaFragment.setOnMediaClickListener(AddSpotActivity.this);
+
+            return mediaFragment;
         }
 
         @Override

@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,27 +19,30 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.crash.FirebaseCrash;
 
-import java.text.ParseException;
-import java.util.Date;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.communikein.waveonthego.datatype.Event;
 
 public class EventDetailsActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    private TextView name_txt;
-    private TextView dateTime_txt;
-    private TextView location_txt;
-    private TextView description_txt;
-    private GoogleMap mMap;
+    @BindView(R.id.eventName_txt)
+    TextView name_txt;
+    @BindView(R.id.dateTime_txt)
+    TextView dateTime_txt;
+    @BindView(R.id.location_txt)
+    TextView location_txt;
+    @BindView(R.id.description_txt)
+    TextView description_txt;
 
-    private String mLocation;
-    private String mName;
-    private String mDescription;
-    private Date mStart;
-    private Date mEnd = null;
-    private LatLng mCoords;
+    private GoogleMap mMap;
+    private Event event;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -55,6 +57,7 @@ public class EventDetailsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler(handler);
         setContentView(R.layout.activity_event_details);
+        ButterKnife.bind(this);
 
         initUI();
         parseData();
@@ -63,60 +66,37 @@ public class EventDetailsActivity extends AppCompatActivity
 
 
     private void initUI() {
-        name_txt = (TextView) findViewById(R.id.eventName_txt);
-        dateTime_txt = (TextView) findViewById(R.id.dateTime_txt);
-        location_txt = (TextView) findViewById(R.id.location_txt);
-        description_txt = (TextView) findViewById(R.id.description_txt);
         description_txt.setMovementMethod(new ScrollingMovementMethod());
-
-        name_txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takeMeThere();
-            }
-        });
     }
 
     private void parseData() {
         Intent intent = getIntent();
-        if (intent != null) {
-            mLocation = intent.getStringExtra("LOCATION");
-            mName = intent.getStringExtra("NAME");
-            mDescription = intent.getStringExtra("DESCRIPTION");
 
-            String start = intent.getStringExtra("START");
-            String end = intent.getStringExtra("END");
+        if (intent != null) {
+            String tmp = intent.getStringExtra(Event.EVENT);
             try {
-                mStart = Utils.dateFBFormat.parse(start);
-                if (end != null)
-                    mEnd = Utils.dateFBFormat.parse(end);
-            } catch (ParseException e) {
-                mStart = null;
-                mEnd = null;
+                JSONObject obj = new JSONObject(tmp);
+                event = Event.fromJSON(obj);
+            } catch (JSONException e) {
+                event = null;
             }
         }
     }
 
     private void refreshUI() {
-        name_txt.setText(mName);
-        description_txt.setText(mDescription);
-        location_txt.setText(mLocation);
+        name_txt.setText(event.getName());
+        description_txt.setText(event.getDescription());
+        location_txt.setText(event.getLocation());
 
-        String startEndTime = "Start: " + Event.printDate(mStart, Utils.dateTimeFormat)
+        String startEndTime =
+                "Start: " + Event.printDate(event.getDateStart(), Utils.dateTimeFormat)
                 + "\n"
-                + "End: " + Event.printDate(mEnd, Utils.dateTimeFormat);
+                + "End: " + Event.printDate(event.getDateEnd(), Utils.dateTimeFormat);
         dateTime_txt.setText(startEndTime);
     }
 
@@ -124,47 +104,55 @@ public class EventDetailsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        updateAddress(this);
+        if (event.getCoords() == null)
+            updateAddress(this);
     }
 
 
     private void updateAddress(final Context context){
-        (new AsyncTask<Void, Void, LatLng>() {
+        (new AsyncTask<Void, Void, Void>() {
             @Override
-            protected LatLng doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 Geocoder geocoder = new Geocoder(context);
                 try{
-                    List<Address> add = geocoder.getFromLocationName(mLocation, 1);
+                    List<Address> add = geocoder.getFromLocationName(event.getLocation(), 1);
 
-                    if (add != null && add.size() > 0 && add.get(0) != null) {
-                        mCoords = new LatLng(add.get(0).getLatitude(), add.get(0).getLongitude());
-                    }
+                    if (add != null && add.size() > 0 && add.get(0) != null)
+                        event.setCoords(new LatLng(
+                                add.get(0).getLatitude(),
+                                add.get(0).getLongitude()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                return mCoords;
+                return null;
             }
 
             @Override
-            protected void onPostExecute(LatLng coords) {
+            protected void onPostExecute(Void coords) {
                 super.onPostExecute(coords);
 
                 if (mMap != null && coords != null) {
-                    mMap.addMarker(new MarkerOptions().position(coords));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 15.5f));
+                    mMap.addMarker(new MarkerOptions().position(event.getCoords()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.getCoords(), 15.5f));
                 }
             }
         }).execute();
     }
 
-    private void takeMeThere() {
-        String format = "geo:0,0?q=" + mCoords.latitude + "," + mCoords.longitude +
-                "(" + mName + ")";
+    @OnClick(R.id.fab)
+    public void takeMeThere() {
+        String format = "geo:0,0?q=" + event.getLatitude() + "," + event.getLongitude() +
+                "(" + event.getName() + ")";
         Uri uri = Uri.parse(format);
 
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.name_txt)
+    public void closeActivity() {
+        finish();
     }
 }

@@ -42,7 +42,7 @@ public class Spot {
     @PropertyName("description")
     private String mDescription;
     @PropertyName("images")
-    private ArrayList<String> images;
+    private ArrayList<String> images = new ArrayList<>();
 
 
     public Spot() {
@@ -55,28 +55,6 @@ public class Spot {
         setLocation(location);
         setCoords(coords);
         setImages(new ArrayList<String>());
-    }
-
-    public Spot(JSONObject obj) {
-        if (obj != null) {
-            try {
-                if (obj.has("id"))
-                    setID(obj.getString("id"));
-                if (obj.has("description"))
-                    setDescription(obj.getString("description"));
-                if (obj.has("location"))
-                    setLocation(obj.getString("location"));
-                if (obj.has("latitude"))
-                    setLatitude(obj.getDouble("latitude"));
-                if (obj.has("longitude"))
-                    setLongitude(obj.getDouble("longitude"));
-                setCoords(new LatLng(getLatitude(), getLongitude()));
-                if (obj.has("name"))
-                    setName(obj.getString("name"));
-                if (obj.has("images"))
-                    setImages(obj.getJSONArray("images"));
-            } catch (JSONException ignore) {}
-        }
     }
 
     @PropertyName("id")
@@ -95,7 +73,7 @@ public class Spot {
     }
 
     @PropertyName("name")
-    private void setName(String name) {
+    public void setName(String name) {
         this.mName = name;
     }
 
@@ -105,7 +83,7 @@ public class Spot {
     }
 
     @PropertyName("description")
-    private void setDescription(String description) {
+    public void setDescription(String description) {
         this.mDescription = description;
     }
 
@@ -115,7 +93,7 @@ public class Spot {
     }
 
     @PropertyName("location")
-    private void setLocation(String location) {
+    public void setLocation(String location) {
         this.mLocation = location;
     }
 
@@ -125,7 +103,7 @@ public class Spot {
     }
 
     @Exclude
-    private void setCoords(LatLng coords) {
+    public void setCoords(LatLng coords) {
         this.mCoords = coords;
         if (coords != null) {
             this.latitude = coords.latitude;
@@ -134,22 +112,22 @@ public class Spot {
     }
 
     @PropertyName("latitude")
-    private double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
     @PropertyName("latitude")
-    private void setLatitude(double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
     @PropertyName("longitude")
-    private double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     @PropertyName("longitude")
-    private void setLongitude(double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -162,14 +140,14 @@ public class Spot {
     private JSONArray getImagesJSONArray() {
         JSONArray array = new JSONArray();
 
-        for (String str : getImages())
+        if (getImages() != null) for (String str : getImages())
             array.put(str);
 
         return array;
     }
 
     @PropertyName("images")
-    private void setImages(ArrayList<String> images) {
+    public void setImages(ArrayList<String> images) {
         this.images = new ArrayList<>();
         for (String str : images)
             addImage(str);
@@ -180,7 +158,7 @@ public class Spot {
         setImages(new ArrayList<String>());
 
         try {
-            for (int i = 0; i < images.length(); i++)
+            if (images != null) for (int i = 0; i < images.length(); i++)
                 addImage(images.getString(i));
         } catch (JSONException e) {
             setImages(new ArrayList<String>());
@@ -196,7 +174,6 @@ public class Spot {
     public void removeImage(String image) {
         this.images.remove(image);
     }
-
 
     @Exclude
     public Map<String, Object> toMap() {
@@ -229,5 +206,35 @@ public class Spot {
         }
 
         return obj;
+    }
+
+
+    public static Spot fromJSON(JSONObject obj) {
+        Spot spot = null;
+        if (obj != null) {
+            try {
+                spot = new Spot();
+
+                if (obj.has("id"))
+                    spot.setID(obj.getString("id"));
+                if (obj.has("description"))
+                    spot.setDescription(obj.getString("description"));
+                if (obj.has("location"))
+                    spot.setLocation(obj.getString("location"));
+                if (obj.has("latitude"))
+                    spot.setLatitude(obj.getDouble("latitude"));
+                if (obj.has("longitude"))
+                    spot.setLongitude(obj.getDouble("longitude"));
+                spot.setCoords(new LatLng(spot.getLatitude(), spot.getLongitude()));
+                if (obj.has("name"))
+                    spot.setName(obj.getString("name"));
+                if (obj.has("images"))
+                    spot.setImages(obj.getJSONArray("images"));
+            } catch (JSONException e) {
+                spot = null;
+            }
+        }
+
+        return spot;
     }
 }
