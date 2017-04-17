@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +139,7 @@ public class Spot {
     }
 
     @PropertyName("latitude")
-    public void setLatitude(double latitude) {
+    private void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
@@ -150,7 +149,7 @@ public class Spot {
     }
 
     @PropertyName("longitude")
-    public void setLongitude(double longitude) {
+    private void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -160,7 +159,7 @@ public class Spot {
     }
 
     @Exclude
-    public JSONArray getImagesJSONArray() {
+    private JSONArray getImagesJSONArray() {
         JSONArray array = new JSONArray();
 
         for (String str : getImages())
@@ -170,14 +169,14 @@ public class Spot {
     }
 
     @PropertyName("images")
-    public void setImages(ArrayList<String> images) {
+    private void setImages(ArrayList<String> images) {
         this.images = new ArrayList<>();
         for (String str : images)
             addImage(str);
     }
 
     @Exclude
-    public void setImages(JSONArray images) {
+    private void setImages(JSONArray images) {
         setImages(new ArrayList<String>());
 
         try {

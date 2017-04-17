@@ -40,9 +40,6 @@ public class SpotDetailsActivity extends AppCompatActivity
     private TextView name_txt;
     private TextView location_txt;
     private TextView description_txt;
-    private GoogleMap mMap;
-    private ViewPager gallery;
-    private MediasPagerAdapter mMediasPagerAdapter;
 
     private Spot mSpot;
 
@@ -71,7 +68,7 @@ public class SpotDetailsActivity extends AppCompatActivity
         name_txt = (TextView) findViewById(R.id.eventName_txt);
         location_txt = (TextView) findViewById(R.id.location_txt);
         description_txt = (TextView) findViewById(R.id.description_txt);
-        gallery = (ViewPager) findViewById(R.id.containerMedia);
+        ViewPager gallery = (ViewPager) findViewById(R.id.containerMedia);
 
         description_txt.setMovementMethod(new ScrollingMovementMethod());
 
@@ -82,7 +79,7 @@ public class SpotDetailsActivity extends AppCompatActivity
             }
         });
 
-        mMediasPagerAdapter = new MediasPagerAdapter(getSupportFragmentManager());
+        MediasPagerAdapter mMediasPagerAdapter = new MediasPagerAdapter(getSupportFragmentManager());
         gallery.setAdapter(mMediasPagerAdapter);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -133,10 +130,8 @@ public class SpotDetailsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        mMap.addMarker(new MarkerOptions().position(mSpot.getCoords()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mSpot.getCoords(), 15.5f));
+        googleMap.addMarker(new MarkerOptions().position(mSpot.getCoords()));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mSpot.getCoords(), 15.5f));
     }
 
 

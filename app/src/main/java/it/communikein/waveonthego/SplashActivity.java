@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private View imageView;
 
-    Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+    private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.app_icon);
 
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         DBHandler.getInstance().setupDB();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {

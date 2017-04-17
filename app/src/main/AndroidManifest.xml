@@ -44,7 +44,9 @@
         <activity
             android:name=".AddSpotActivity"
             android:label="@string/title_activity_add_spot" />
-        <activity android:name=".SpotDetailsActivity"></activity>
+        <activity
+            android:name=".SpotDetailsActivity"
+            android:label="@string/title_info_spot"/>
     </application>
 
 </manifest>

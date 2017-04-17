@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.EditText;
 
@@ -40,7 +39,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -76,8 +74,7 @@ public class AddSpotActivity extends AppCompatActivity implements
     private MediasPagerAdapter mMediasPagerAdapter;
 
     private LatLng coords = null;
-    private ArrayList<File> medias = new ArrayList<>();
-    private ArrayList<UploadTask> mediaTasks = new ArrayList<>();
+    private final ArrayList<File> medias = new ArrayList<>();
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -262,7 +259,6 @@ public class AddSpotActivity extends AppCompatActivity implements
             tryUploadImages(spot);
 
             finish();
-            return;
         }
     }
 
@@ -328,8 +324,6 @@ public class AddSpotActivity extends AppCompatActivity implements
                     DBHandler.getInstance().updateSpot(spot);
                 }
             });
-
-            mediaTasks.add(upload);
         }
     }
 
@@ -388,7 +382,7 @@ public class AddSpotActivity extends AppCompatActivity implements
         }
     }
 
-    private NotificationManager uploadNotification(int id, int text, int progress) {
+    private void uploadNotification(int id, int text, int progress) {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -403,7 +397,5 @@ public class AddSpotActivity extends AppCompatActivity implements
         // Because the ID remains unchanged, the existing notification is
         // updated.
         mNotificationManager.notify(id, mNotifyBuilder.build());
-
-        return mNotificationManager;
     }
 }

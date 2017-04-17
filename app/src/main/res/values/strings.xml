@@ -28,4 +28,5 @@
     <string name="upload_paused">Upload in pausa</string>
     <string name="upload_failed">Upload fallito.</string>
     <string name="upload_completed">Upload completato!</string>
+    <string name="title_info_spot">Info spot</string>
 </resources>

@@ -46,14 +46,10 @@ public class DBHandler {
             refSpots = db.getReference(DB_SPOTS);
     }
 
-    public DBHandler setupDB() {
-        DBHandler handler = DBHandler.getInstance();
-
+    public void setupDB() {
         refArticles.keepSynced(true);
         refEvents.keepSynced(true);
         refSpots.keepSynced(true);
-
-        return handler;
     }
 
     public void writeToArticles(Article article){

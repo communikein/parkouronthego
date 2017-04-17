@@ -13,15 +13,11 @@ import android.view.MenuItem;
 
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    public static SparseArray<String> imagesNotificationUpload = new SparseArray<>();
+    public static final SparseArray<String> imagesNotificationUpload = new SparseArray<>();
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override

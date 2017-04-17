@@ -1,18 +1,11 @@
 package it.communikein.waveonthego.adapter;
 
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.Context;
 import android.view.View;
 
-import com.firebase.ui.auth.ui.ActivityHelper;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
-import java.io.File;
-
-import it.communikein.waveonthego.LocalMediaFragment;
 import it.communikein.waveonthego.R;
 import it.communikein.waveonthego.datatype.Spot;
 import it.communikein.waveonthego.views.SpotViewHolder;
