@@ -72,10 +72,10 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.simple_image, container, false);
-        unbinder = ButterKnife.bind(rootView);
+        View view = inflater.inflate(R.layout.simple_image, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
-        return rootView;
+        return view;
     }
 
     @Override
@@ -84,13 +84,8 @@ public class LocalMediaFragment extends android.support.v4.app.Fragment {
 
         Glide.with(this)
                 .load(media)
+                .placeholder(R.drawable.ic_image)
                 .into(mediaImage);
-
-
-
-        if (mMediaLongClickCallBack != null) {
-
-        }
     }
 
     @Override

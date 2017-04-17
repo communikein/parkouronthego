@@ -160,6 +160,7 @@ public class SpotDetailsActivity extends AppCompatActivity
         Glide.with(this)
                 .using(new FirebaseImageLoader())
                 .load(media)
+                .placeholder(R.drawable.ic_image)
                 .into(imageView);
 
         //now that the dialog is set up, it's time to show it

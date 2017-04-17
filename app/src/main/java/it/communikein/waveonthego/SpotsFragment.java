@@ -49,7 +49,7 @@ public class SpotsFragment extends Fragment
                              Bundle savedInstanceState) {
         Thread.setDefaultUncaughtExceptionHandler(handler);
         View view = inflater.inflate(R.layout.fragment_spots, container, false);
-        unbinder = ButterKnife.bind(view);
+        unbinder = ButterKnife.bind(this, view);
 
         return view;
     }

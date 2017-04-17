@@ -66,24 +66,27 @@ public class OnlineMediaFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.simple_image, container, false);
+        View view = inflater.inflate(R.layout.simple_image, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(view);
 
         Glide.with(this)
                 .using(new FirebaseImageLoader())
                 .load(mediaRef)
+                .placeholder(R.drawable.ic_image)
                 .into(mediaImage);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //unbinder.unbind();
+        unbinder.unbind();
     }
 
     public void setOnMediaClickListener(OnMediaClick listener) {

@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.communikein.waveonthego.Utils;
 
@@ -156,6 +158,20 @@ public class Event {
         this.mDateEnd = end;
     }
 
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("id", getID());
+        result.put("name", getName());
+        result.put("location", getLocation());
+        result.put("latitude", getLatitude());
+        result.put("longitude", getLongitude());
+        result.put("date_start", getDateStart());
+        result.put("date_end", getDateEnd());
+        result.put("description", getDescription());
+
+        return result;
+    }
 
     @Exclude
     public JSONObject toJSON() {

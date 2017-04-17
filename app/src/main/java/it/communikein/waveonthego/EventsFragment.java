@@ -100,6 +100,7 @@ public class EventsFragment extends Fragment
 
         // specify an adapter (see also next example)
         mAdapter = new FirebaseEventListAdapter(Event.class, EventViewHolder.class, ref);
+        mAdapter.setOnItemClickListener(this);
 
         RecyclerView mRecyclerView = ButterKnife.findById(view, R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

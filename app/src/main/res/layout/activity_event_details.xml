@@ -21,7 +21,7 @@
                     android:layout_width="match_parent" android:layout_height="160dp"
                     android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-                <TextView android:id="@+id/eventName_txt" android:gravity="center_vertical"
+                <TextView android:id="@+id/name_txt" android:gravity="center_vertical"
                     android:layout_width="match_parent" android:layout_height="match_parent"
                     android:text="@string/label_event_name" android:textSize="25sp"
                     android:textColor="@color/colorPrimaryDark"

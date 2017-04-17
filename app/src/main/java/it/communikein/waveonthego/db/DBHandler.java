@@ -56,8 +56,30 @@ public class DBHandler {
         refArticles.child(article.getID()).setValue(article);
     }
 
+    public void updateArticle(Article article){
+        if (article.getID() != null) {
+            Map<String, Object> postValues = article.toMap();
+
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(article.getID(), postValues);
+
+            refArticles.updateChildren(childUpdates);
+        }
+    }
+
     public void writeToEvents(Event event){
         refEvents.child(event.getID()).setValue(event);
+    }
+
+    public void updateEvent(Event event){
+        if (event.getID() != null) {
+            Map<String, Object> postValues = event.toMap();
+
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(event.getID(), postValues);
+
+            refEvents.updateChildren(childUpdates);
+        }
     }
 
     public String writeToSpots(Spot spot){

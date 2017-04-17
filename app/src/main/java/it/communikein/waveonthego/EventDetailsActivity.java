@@ -28,11 +28,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.communikein.waveonthego.datatype.Event;
+import it.communikein.waveonthego.db.DBHandler;
 
 public class EventDetailsActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    @BindView(R.id.eventName_txt)
+    @BindView(R.id.name_txt)
     TextView name_txt;
     @BindView(R.id.dateTime_txt)
     TextView dateTime_txt;
@@ -49,6 +50,7 @@ public class EventDetailsActivity extends AppCompatActivity
         public void uncaughtException(Thread t, Throwable e) {
             e.printStackTrace();
             FirebaseCrash.report(e);
+            e.getMessage();
         }
     };
 
@@ -63,7 +65,6 @@ public class EventDetailsActivity extends AppCompatActivity
         parseData();
         refreshUI();
     }
-
 
     private void initUI() {
         description_txt.setMovementMethod(new ScrollingMovementMethod());
@@ -104,7 +105,8 @@ public class EventDetailsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (event.getCoords() == null)
+        if (event.getCoords() == null ||
+                event.getCoords().latitude < 0 || event.getCoords().longitude < 0)
             updateAddress(this);
     }
 
@@ -117,10 +119,13 @@ public class EventDetailsActivity extends AppCompatActivity
                 try{
                     List<Address> add = geocoder.getFromLocationName(event.getLocation(), 1);
 
-                    if (add != null && add.size() > 0 && add.get(0) != null)
+                    if (add != null && add.size() > 0 && add.get(0) != null) {
                         event.setCoords(new LatLng(
                                 add.get(0).getLatitude(),
                                 add.get(0).getLongitude()));
+
+                        DBHandler.getInstance().updateEvent(event);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -132,7 +137,8 @@ public class EventDetailsActivity extends AppCompatActivity
             protected void onPostExecute(Void coords) {
                 super.onPostExecute(coords);
 
-                if (mMap != null && coords != null) {
+                if (mMap != null && event.getCoords() != null &&
+                        event.getCoords().latitude >= 0 && event.getCoords().longitude >= 0) {
                     mMap.addMarker(new MarkerOptions().position(event.getCoords()));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(event.getCoords(), 15.5f));
                 }

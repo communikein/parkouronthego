@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.communikein.waveonthego.Utils;
 
@@ -94,6 +96,18 @@ public class Article {
     @Exclude
     public String printDate() {
         return Utils.dayMonthFormat.format(getDatePublish());
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("id", getID());
+        result.put("title", getTitle());
+        result.put("summary", getSummary());
+        result.put("url_full_article", getUrlFullArticle());
+        result.put("date_publish", getDatePublish());
+
+        return result;
     }
 
     @Exclude

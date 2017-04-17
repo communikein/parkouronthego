@@ -198,6 +198,7 @@ public class AddSpotActivity extends AppCompatActivity implements
 
         Glide.with(this)
                 .load(media)
+                .placeholder(R.drawable.ic_image)
                 .into(imageView);
 
         //now that the dialog is set up, it's time to show it
