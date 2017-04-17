@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    public SparseArray<String> imagesNotificationUpload = new SparseArray<>();
+    public static SparseArray<String> imagesNotificationUpload = new SparseArray<>();
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override

@@ -285,77 +285,45 @@ public class AddSpotActivity extends AppCompatActivity implements
             UploadTask upload = newImageRef.putFile(uri);
 
             // Sets an ID for the notification, so it can be updated
-            SparseArray<String> notifications = ((MainActivity) getParent())
-                    .imagesNotificationUpload;
-            final int newID = notifications.keyAt(notifications.size() - 1) + 1;
+            int tmp = 0;
+            if (MainActivity.imagesNotificationUpload.size() > 0)
+                tmp = MainActivity.imagesNotificationUpload
+                        .keyAt(MainActivity.imagesNotificationUpload.size() - 1) + 1;
+            final int newID = tmp;
 
-            final NotificationManager mNotificationManager = uploadNotification(newID);
+            uploadNotification(newID, R.string.uploading_image, -1);
+            MainActivity.imagesNotificationUpload.append(newID, spot.getID());
 
             // Register observers to listen for when the download is done or if it fails
             upload.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    int progress = 100 * (int) (taskSnapshot.getBytesTransferred() /
-                            taskSnapshot.getTotalByteCount());
+                    int progress = (int) (
+                            100 * ((double) taskSnapshot.getBytesTransferred() /
+                            (double) taskSnapshot.getTotalByteCount()));
 
-                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
-                            .setContentTitle(getString(R.string.uploading))
-                            .setContentText(getString(R.string.uploading_image))
-                            .setSmallIcon(R.drawable.ic_image)
-                            .setProgress(100, progress, true);
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    mNotificationManager.notify(
-                            newID,
-                            mNotifyBuilder.build());
+                    uploadNotification(newID, R.string.uploading_image, progress);
                 }
             }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
-                            .setContentTitle(getString(R.string.uploading))
-                            .setContentText(getString(R.string.upload_paused))
-                            .setSmallIcon(R.drawable.ic_image);
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    mNotificationManager.notify(
-                            newID,
-                            mNotifyBuilder.build());
+                    uploadNotification(newID, R.string.upload_paused, -1);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     FirebaseCrash.report(exception);
 
-                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
-                            .setContentTitle(getString(R.string.uploading))
-                            .setContentText(getString(R.string.upload_failed))
-                            .setSmallIcon(R.drawable.ic_image);
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    mNotificationManager.notify(
-                            newID,
-                            mNotifyBuilder.build());
+                    uploadNotification(newID, R.string.upload_failed, -1);
+                    MainActivity.imagesNotificationUpload.remove(newID);
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getParent())
-                            .setContentTitle(getString(R.string.uploading))
-                            .setContentText(getString(R.string.upload_completed))
-                            .setSmallIcon(R.drawable.ic_image);
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    mNotificationManager.notify(
-                            newID,
-                            mNotifyBuilder.build());
+                    uploadNotification(newID, R.string.upload_completed, 100);
+                    MainActivity.imagesNotificationUpload.remove(newID);
 
                     String cloudPath = taskSnapshot.getMetadata().getReference().getPath();
-
                     spot.addImage(cloudPath);
                     DBHandler.getInstance().updateSpot(spot);
                 }
@@ -420,14 +388,17 @@ public class AddSpotActivity extends AppCompatActivity implements
         }
     }
 
-    private NotificationManager uploadNotification(int id) {
+    private NotificationManager uploadNotification(int id, int text, int progress) {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle(getString(R.string.uploading))
-                .setContentText(getString(R.string.uploading_image))
+                .setContentText(getString(text))
                 .setSmallIcon(R.drawable.ic_image);
+
+        if (progress >= 0)
+                mNotifyBuilder.setProgress(100, progress, false);
 
         // Because the ID remains unchanged, the existing notification is
         // updated.
