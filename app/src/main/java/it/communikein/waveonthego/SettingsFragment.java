@@ -1,15 +1,18 @@
 package it.communikein.waveonthego;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,13 +42,14 @@ import it.communikein.waveonthego.views.ArticleViewHolder;
 public class SettingsFragment extends Fragment {
 
     private FirebaseAdminListAdapter mAdapter;
-    private DatabaseReference ref;
     private Unbinder unbinder;
 
     @BindView(R.id.addAdmin_btt)
     public Button addAdmin_btt;
     @BindView(R.id.my_recycler_view)
     public RecyclerView requests_list;
+    @BindView(R.id.infoAdminList_txt)
+    public TextView infoAdminList_lbl;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -72,8 +76,6 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_USERS);
-
         initUI(view);
     }
 
@@ -89,18 +91,37 @@ public class SettingsFragment extends Fragment {
                     admin = (boolean) dataSnapshot.getValue();
 
                 addAdmin_btt.setVisibility(admin ? View.GONE : View.VISIBLE);
+                infoAdminList_lbl.setVisibility(admin ? View.GONE : View.VISIBLE);
                 requests_list.setVisibility(admin ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 addAdmin_btt.setVisibility(View.VISIBLE);
+                infoAdminList_lbl.setVisibility(View.VISIBLE);
                 requests_list.setVisibility(View.GONE);
             }
         };
         db.getReference(DBHandler.DB_ADMINS + "/" + user.getUid()).addValueEventListener(postListener);
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_USERS);
         mAdapter = new FirebaseAdminListAdapter(Admin.class, AdminViewHolder.class, ref);
+        mAdapter.setOnItemLongClickListener(new FirebaseAdminListAdapter.OnItemLongClick() {
+            @Override
+            public void onItemLongClick(final Admin admin) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(getString(R.string.label_add_admin))
+                        .setMessage(getString(R.string.confirm_add_admin))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DBHandler.getInstance().confirmAdmin(admin.getUID());
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
 
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

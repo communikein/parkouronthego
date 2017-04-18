@@ -31,8 +31,8 @@ public class Admin {
     }
 
     @PropertyName("uid")
-    public void setUID(String id) {
-        this.mUid = id;
+    public void setUID(String uid) {
+        this.mUid = uid;
     }
 
     @PropertyName("display_name")
@@ -41,8 +41,8 @@ public class Admin {
     }
 
     @PropertyName("display_name")
-    public void setName(String name) {
-        this.mName = name;
+    public void setName(String display_name) {
+        this.mName = display_name;
     }
 
     @PropertyName("email")
@@ -51,8 +51,8 @@ public class Admin {
     }
 
     @PropertyName("email")
-    public void setMail(String mail) {
-        this.mMail = mail;
+    public void setMail(String email) {
+        this.mMail = email;
     }
 
 

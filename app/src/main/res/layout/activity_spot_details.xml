@@ -64,4 +64,11 @@
         android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
         app:fabSize="normal" app:srcCompat="@drawable/ic_directions" />
 
+    <android.support.design.widget.FloatingActionButton android:id="@+id/fab_edit"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:contentDescription="@null" android:visibility="visible"
+        android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+        android:layout_gravity="bottom|end"
+        app:fabSize="normal" app:srcCompat="@drawable/ic_edit" />
+
 </android.support.design.widget.CoordinatorLayout>

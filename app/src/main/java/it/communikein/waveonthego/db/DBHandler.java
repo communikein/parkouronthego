@@ -120,5 +120,6 @@ public class DBHandler {
 
     public void confirmAdmin(String uid){
         db.getReference(DB_ADMINS).child(uid).setValue(true);
+        db.getReference(DB_ADMINS_WAITING).child(uid).removeValue();
     }
 }

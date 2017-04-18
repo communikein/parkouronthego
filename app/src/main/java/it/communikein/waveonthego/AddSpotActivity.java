@@ -10,6 +10,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NotificationCompat;
@@ -33,7 +35,12 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -47,6 +54,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.communikein.waveonthego.datatype.Spot;
 import it.communikein.waveonthego.db.DBHandler;
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -75,6 +83,8 @@ public class AddSpotActivity extends AppCompatActivity implements
     EditText description_txt;
     @BindView(R.id.containerMedia)
     ViewPager gallery;
+    @BindView(R.id.fab_edit)
+    FloatingActionButton edit_fab;
     private MediasPagerAdapter mMediasPagerAdapter;
 
     private LatLng coords = null;
@@ -124,6 +134,28 @@ public class AddSpotActivity extends AppCompatActivity implements
                 tryChooseImage();
             }
         });
+
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        FirebaseUser user = (MainActivity.user);
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean admin = false;
+                if (dataSnapshot.getValue() != null)
+                    admin = (boolean) dataSnapshot.getValue();
+
+                edit_fab.setVisibility(admin ? View.VISIBLE : View.GONE);
+                edit_fab.setEnabled(admin);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                edit_fab.setVisibility(View.GONE);
+                edit_fab.setEnabled(false);
+            }
+        };
+        db.getReference(DBHandler.DB_ADMINS + "/" + user.getUid()).addValueEventListener(postListener);
 
         requestLocationPermission();
     }
@@ -203,6 +235,11 @@ public class AddSpotActivity extends AppCompatActivity implements
 
         //now that the dialog is set up, it's time to show it
         dialog.show();
+    }
+
+    @OnClick(R.id.fab_edit)
+    public void editSpot() {
+        Snackbar.make(edit_fab, R.string.yay, Snackbar.LENGTH_LONG).show();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

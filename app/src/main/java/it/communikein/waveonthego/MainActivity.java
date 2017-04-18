@@ -10,6 +10,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
@@ -27,6 +28,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.communikein.waveonthego.db.DBHandler;
 
@@ -40,10 +42,14 @@ public class MainActivity extends AppCompatActivity {
     private int mNavItemId = -1;
     private int startNavItemId;
     private final Handler mDrawerActionHandler = new Handler();
+    private ActionBarDrawerToggle mDrawerToggle;
 
-    public DrawerLayout drawerLayout;
-    public ImageView profile_img;
-    public TextView name_txt;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.navigation)
+    BottomNavigationView navigation;
+    @BindView(R.id.navigation_view)
+    NavigationView drawerNavView;
 
     public static FirebaseUser user;
 
@@ -73,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
     private void initAppBar() {
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+
         if (toolbar != null)
             toolbar.setTitle(R.string.app_name);
     }
@@ -108,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 /* ************* SETTINGS TAB *************** */
                 case R.id.navigation_settings:
+                    navigation.setSelectedItemId(-1);
                     fragmentManager.beginTransaction()
                             .replace(R.id.content, new SettingsFragment())
                             .commit();
@@ -124,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initNavigationViews(){
-        drawerLayout = ButterKnife.findById(this, R.id.drawer_layout);
-        NavigationView drawerNavView = (NavigationView) findViewById(R.id.navigation_view);
         if (drawerNavView != null) {
             drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -147,6 +158,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            mDrawerToggle = new ActionBarDrawerToggle(
+                    this, drawerLayout,
+                    R.string.navigation_drawer_open,
+                    R.string.navigation_drawer_close
+            );
+            mDrawerToggle.syncState();
+            drawerLayout.addDrawerListener(mDrawerToggle);
+
             // select the correct nav menu item
             MenuItem item = drawerNavView.getMenu().findItem(startNavItemId);
             if (item != null)
@@ -154,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         }
         initHeader();
 
-        BottomNavigationView navigation = ButterKnife.findById(this, R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -167,27 +185,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initHeader() {
-        if (name_txt == null) {
-            NavigationView menu = (NavigationView) drawerLayout.getChildAt(1);
-            View inflated = menu.inflateHeaderView(R.layout.nav_drawer_header);
+        View view = drawerNavView.inflateHeaderView(R.layout.nav_drawer_header);
 
-            name_txt = (TextView) inflated.findViewById(R.id.name);
-            TextView mail_txt = (TextView) inflated.findViewById(R.id.email);
-            profile_img = (ImageView) inflated.findViewById(R.id.circleView);
-
-            if (user != null) {
-                name_txt.setText(user.getDisplayName());
-                mail_txt.setText(user.getEmail());
-            }
-
-            Glide.with(this)
-                    .fromUri()
-                    .load(user.getPhotoUrl())
-                    .placeholder(R.drawable.ic_image)
-                    .into(profile_img);
+        ImageView profile_img = ButterKnife.findById(view, R.id.circleView);
+        TextView name_txt = ButterKnife.findById(view, R.id.name);
+        TextView mail_txt = ButterKnife.findById(view, R.id.email);
+        if (user != null) {
+            name_txt.setText(user.getDisplayName());
+            mail_txt.setText(user.getEmail());
         }
+
+        Glide.with(this)
+                .fromUri()
+                .load(user.getPhotoUrl())
+                .placeholder(R.drawable.ic_image)
+                .into(profile_img);
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+    }
 
     private void parseData(Bundle savedInstanceState) {
         // load saved navigation state if present
