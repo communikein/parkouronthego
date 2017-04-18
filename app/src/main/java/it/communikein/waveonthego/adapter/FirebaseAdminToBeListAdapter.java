@@ -6,19 +6,19 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
 import it.communikein.waveonthego.R;
-import it.communikein.waveonthego.datatype.Admin;
+import it.communikein.waveonthego.datatype.AdminToBe;
 import it.communikein.waveonthego.views.AdminViewHolder;
 
 /**
  *
  * Created by Elia Maracani on 18/04/2017.
  */
-public class FirebaseAdminListAdapter extends FirebaseRecyclerAdapter<Admin, AdminViewHolder> {
+public class FirebaseAdminToBeListAdapter extends FirebaseRecyclerAdapter<AdminToBe, AdminViewHolder> {
 
     private OnItemLongClick mCallBack;
 
     public interface OnItemLongClick {
-        void onItemLongClick(Admin admin);
+        void onItemLongClick(AdminToBe adminToBe);
     }
 
     /**
@@ -28,8 +28,8 @@ public class FirebaseAdminListAdapter extends FirebaseRecyclerAdapter<Admin, Adm
      * @param ref             The Firebase location to watch for data changes. Can also be a slice of a location,
      *                        using some combination of {@code limit()}, {@code startAt()}, and {@code endAt()}.
      */
-    public FirebaseAdminListAdapter(Class<Admin> modelClass,
-                                      Class<AdminViewHolder> viewHolderClass, Query ref) {
+    public FirebaseAdminToBeListAdapter(Class<AdminToBe> modelClass,
+                                        Class<AdminViewHolder> viewHolderClass, Query ref) {
         super(modelClass, R.layout.entry_layout_admin, viewHolderClass, ref);
     }
 
@@ -38,7 +38,7 @@ public class FirebaseAdminListAdapter extends FirebaseRecyclerAdapter<Admin, Adm
     }
 
     @Override
-    protected void populateViewHolder(AdminViewHolder viewHolder, final Admin model, int position) {
+    protected void populateViewHolder(AdminViewHolder viewHolder, final AdminToBe model, int position) {
         viewHolder.mTitleTextView.setText(model.getName());
         viewHolder.mSummaryTextView.setText(model.getMail());
 

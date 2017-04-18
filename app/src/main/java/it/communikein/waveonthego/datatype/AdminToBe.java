@@ -6,7 +6,7 @@ import com.google.firebase.database.PropertyName;
  * Created by eliam on 18/04/2017.
  */
 
-public class Admin {
+public class AdminToBe {
 
     @PropertyName("uid")
     private String mUid;
@@ -15,11 +15,11 @@ public class Admin {
     @PropertyName("email")
     private String mMail;
 
-    public Admin() {
+    public AdminToBe() {
         // Needed for Firebase
     }
 
-    public Admin(String uid, String name, String mail) {
+    public AdminToBe(String uid, String name, String mail) {
         this.mUid = uid;
         this.mName = name;
         this.mMail = mail;
@@ -87,12 +87,12 @@ public class Admin {
 
 
     @Exclude
-    public static Admin fromJSON(JSONObject obj) {
-        Admin admin = null;
+    public static AdminToBe fromJSON(JSONObject obj) {
+        AdminToBe admin = null;
 
         if (obj != null) {
             try {
-                admin  = new Admin();
+                admin  = new AdminToBe();
                 if (obj.has("id"))
                     admin.setUID(obj.getString("uid"));
                 if (obj.has("title"))

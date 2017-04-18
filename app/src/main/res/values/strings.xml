@@ -36,10 +36,12 @@
     <string name="label_add">Aggiungi</string>
     <string name="label_request_admin">Richiedi privilegi Admin</string>
     <string name="label_mail">mail@google.com</string>
-    <string name="label_users_to_confirm_admin">Utenti che hanno richiesto di essere admin.</string>
-    <string name="label_add_admin">Aggiungi admin</string>
-    <string name="confirm_add_admin">Sei sicuro di voler aggiungere questo utente come admin?</string>
+    <string name="label_users_to_confirm_admin">Utenti che hanno richiesto di essere adminToBe.</string>
+    <string name="label_add_admin">Aggiungi adminToBe</string>
+    <string name="confirm_add_admin">Sei sicuro di voler aggiungere questo utente come adminToBe?</string>
     <string name="navigation_drawer_open">Apri</string>
     <string name="navigation_drawer_close">Chiudi</string>
     <string name="yay">YAY! :D</string>
+    <string name="label_description">Descrizione</string>
+    <string name="label_location">Posizione</string>
 </resources>

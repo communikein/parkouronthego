@@ -1,2 +1,4 @@
 <resources>
+    <dimen name="activity_padding">16dp</dimen>
+    <dimen name="text_drawable_side_padding">32dp</dimen>
 </resources>

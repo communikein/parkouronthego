@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.communikein.waveonthego.datatype.AdminToBe;
 import it.communikein.waveonthego.datatype.Article;
 import it.communikein.waveonthego.datatype.Event;
 import it.communikein.waveonthego.datatype.Spot;
@@ -115,11 +116,21 @@ public class DBHandler {
     }
 
     public void requestAdminPrivileges(FirebaseUser user){
-        db.getReference(DB_ADMINS_WAITING).child(user.getUid()).setValue(true);
+        AdminToBe adminToBe = new AdminToBe(user.getUid(), user.getDisplayName(), user.getEmail());
+        requestAdminPrivileges(adminToBe);
     }
 
-    public void confirmAdmin(String uid){
-        db.getReference(DB_ADMINS).child(uid).setValue(true);
-        db.getReference(DB_ADMINS_WAITING).child(uid).removeValue();
+    public void requestAdminPrivileges(AdminToBe adminToBe){
+        db.getReference(DB_ADMINS_WAITING).child(adminToBe.getUID()).setValue(adminToBe);
+    }
+
+    public void confirmAdmin(FirebaseUser user){
+        AdminToBe adminToBe = new AdminToBe(user.getUid(), user.getDisplayName(), user.getEmail());
+        confirmAdmin(adminToBe);
+    }
+
+    public void confirmAdmin(AdminToBe adminToBe){
+        db.getReference(DB_ADMINS).child(adminToBe.getUID()).setValue(adminToBe);
+        db.getReference(DB_ADMINS_WAITING).child(adminToBe.getUID()).removeValue();
     }
 }

@@ -2,7 +2,6 @@ package it.communikein.waveonthego;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -27,13 +26,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import it.communikein.waveonthego.adapter.FirebaseAdminListAdapter;
-import it.communikein.waveonthego.adapter.FirebaseArticleListAdapter;
-import it.communikein.waveonthego.datatype.Admin;
-import it.communikein.waveonthego.datatype.Article;
+import it.communikein.waveonthego.adapter.FirebaseAdminToBeListAdapter;
+import it.communikein.waveonthego.datatype.AdminToBe;
 import it.communikein.waveonthego.db.DBHandler;
 import it.communikein.waveonthego.views.AdminViewHolder;
-import it.communikein.waveonthego.views.ArticleViewHolder;
 
 /**
  * Created by eliam on 18/04/2017.
@@ -41,7 +37,7 @@ import it.communikein.waveonthego.views.ArticleViewHolder;
 
 public class SettingsFragment extends Fragment {
 
-    private FirebaseAdminListAdapter mAdapter;
+    private FirebaseAdminToBeListAdapter mAdapter;
     private Unbinder unbinder;
 
     @BindView(R.id.addAdmin_btt)
@@ -81,14 +77,10 @@ public class SettingsFragment extends Fragment {
 
     private void initUI(View view) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        FirebaseUser user = (MainActivity.user);
-
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean admin = false;
-                if (dataSnapshot.getValue() != null)
-                    admin = (boolean) dataSnapshot.getValue();
+                boolean admin = dataSnapshot.getValue() != null;
 
                 addAdmin_btt.setVisibility(admin ? View.GONE : View.VISIBLE);
                 infoAdminList_lbl.setVisibility(admin ? View.GONE : View.VISIBLE);
@@ -102,19 +94,20 @@ public class SettingsFragment extends Fragment {
                 requests_list.setVisibility(View.GONE);
             }
         };
-        db.getReference(DBHandler.DB_ADMINS + "/" + user.getUid()).addValueEventListener(postListener);
+        db.getReference(DBHandler.DB_ADMINS + "/" + MainActivity.user.getUid())
+                .addValueEventListener(postListener);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_USERS);
-        mAdapter = new FirebaseAdminListAdapter(Admin.class, AdminViewHolder.class, ref);
-        mAdapter.setOnItemLongClickListener(new FirebaseAdminListAdapter.OnItemLongClick() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_ADMINS_WAITING);
+        mAdapter = new FirebaseAdminToBeListAdapter(AdminToBe.class, AdminViewHolder.class, ref);
+        mAdapter.setOnItemLongClickListener(new FirebaseAdminToBeListAdapter.OnItemLongClick() {
             @Override
-            public void onItemLongClick(final Admin admin) {
+            public void onItemLongClick(final AdminToBe adminToBe) {
                 new AlertDialog.Builder(getActivity())
                         .setTitle(getString(R.string.label_add_admin))
                         .setMessage(getString(R.string.confirm_add_admin))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                DBHandler.getInstance().confirmAdmin(admin.getUID());
+                                DBHandler.getInstance().confirmAdmin(adminToBe);
                             }
                         })
                         .setNegativeButton(android.R.string.no, null)

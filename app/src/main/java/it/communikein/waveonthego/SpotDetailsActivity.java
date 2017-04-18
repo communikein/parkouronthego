@@ -3,6 +3,8 @@ package it.communikein.waveonthego;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -22,7 +24,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -33,6 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.communikein.waveonthego.datatype.Spot;
+import it.communikein.waveonthego.db.DBHandler;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -45,11 +54,15 @@ public class SpotDetailsActivity extends AppCompatActivity
     private boolean allowedLocation = false;
 
     @BindView(R.id.name_txt)
-    public TextView name_txt;
+    TextView name_txt;
     @BindView(R.id.location_txt)
-    public TextView location_txt;
+    TextView location_txt;
     @BindView(R.id.description_txt)
-    public TextView description_txt;
+    TextView description_txt;
+    @BindView(R.id.fab_edit)
+    FloatingActionButton fab_edit;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private Spot mSpot;
 
@@ -71,7 +84,6 @@ public class SpotDetailsActivity extends AppCompatActivity
 
         parseData();
         initUI();
-        refreshUI();
     }
 
     private void initUI() {
@@ -85,6 +97,35 @@ public class SpotDetailsActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeMeThere();
+            }
+        });
+        name_txt.setText(mSpot.getName());
+        description_txt.setText(mSpot.getDescription());
+        location_txt.setText(mSpot.getLocation());
+
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean admin = dataSnapshot.getValue() != null;
+
+                fab_edit.setVisibility(admin ? View.VISIBLE : View.GONE);
+                fab_edit.setEnabled(admin);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                fab_edit.setVisibility(View.GONE);
+                fab_edit.setEnabled(false);
+            }
+        };
+        db.getReference(DBHandler.DB_ADMINS + "/" + MainActivity.user.getUid())
+                .addValueEventListener(postListener);
     }
 
     private void parseData() {
@@ -114,19 +155,19 @@ public class SpotDetailsActivity extends AppCompatActivity
         }
     }
 
-    private void refreshUI() {
-        name_txt.setText(mSpot.getName());
-        description_txt.setText(mSpot.getDescription());
-        location_txt.setText(mSpot.getLocation());
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.addMarker(new MarkerOptions().position(mSpot.getCoords()));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mSpot.getCoords(), 15.5f));
     }
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.fab_edit)
+    public void editSpot() {
+        fab.setImageResource(R.drawable.ic_image);
+        fab.setOnClickListener(null);
+        Snackbar.make(fab_edit, R.string.yay, Snackbar.LENGTH_LONG).show();
+    }
+
     public void takeMeThere() {
         requestLocationPermission();
 

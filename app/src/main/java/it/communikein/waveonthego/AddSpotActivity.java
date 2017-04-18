@@ -83,8 +83,6 @@ public class AddSpotActivity extends AppCompatActivity implements
     EditText description_txt;
     @BindView(R.id.containerMedia)
     ViewPager gallery;
-    @BindView(R.id.fab_edit)
-    FloatingActionButton edit_fab;
     private MediasPagerAdapter mMediasPagerAdapter;
 
     private LatLng coords = null;
@@ -121,41 +119,6 @@ public class AddSpotActivity extends AppCompatActivity implements
         mMediasPagerAdapter = new MediasPagerAdapter(getSupportFragmentManager());
         gallery.setAdapter(mMediasPagerAdapter);
         gallery.setVisibility(View.GONE);
-
-        findViewById(R.id.fab_confirm).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tryAddSpot();
-            }
-        });
-        findViewById(R.id.fab_images).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tryChooseImage();
-            }
-        });
-
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        FirebaseUser user = (MainActivity.user);
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean admin = false;
-                if (dataSnapshot.getValue() != null)
-                    admin = (boolean) dataSnapshot.getValue();
-
-                edit_fab.setVisibility(admin ? View.VISIBLE : View.GONE);
-                edit_fab.setEnabled(admin);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                edit_fab.setVisibility(View.GONE);
-                edit_fab.setEnabled(false);
-            }
-        };
-        db.getReference(DBHandler.DB_ADMINS + "/" + user.getUid()).addValueEventListener(postListener);
 
         requestLocationPermission();
     }
@@ -237,11 +200,6 @@ public class AddSpotActivity extends AppCompatActivity implements
         dialog.show();
     }
 
-    @OnClick(R.id.fab_edit)
-    public void editSpot() {
-        Snackbar.make(edit_fab, R.string.yay, Snackbar.LENGTH_LONG).show();
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE && data != null) {
@@ -287,6 +245,18 @@ public class AddSpotActivity extends AppCompatActivity implements
         }
     }
 
+    @OnClick(R.id.fab_add)
+    public void tryAddSpot() {
+        Spot spot = tryMakeSpot();
+        if (spot != null) {
+            String key = DBHandler.getInstance().writeToSpots(spot);
+            spot.setID(key);
+            tryUploadImages(spot);
+
+            finish();
+        }
+    }
+
     private Spot tryMakeSpot() {
         Spot ok = null;
 
@@ -320,18 +290,8 @@ public class AddSpotActivity extends AppCompatActivity implements
         return ok;
     }
 
-    private void tryAddSpot() {
-        Spot spot = tryMakeSpot();
-        if (spot != null) {
-            String key = DBHandler.getInstance().writeToSpots(spot);
-            spot.setID(key);
-            tryUploadImages(spot);
-
-            finish();
-        }
-    }
-
-    private void tryChooseImage() {
+    @OnClick(R.id.fab_images)
+    public void tryChooseImage() {
         requestStoragePermission();
 
         if (allowedStorage)
