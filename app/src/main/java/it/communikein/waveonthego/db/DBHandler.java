@@ -1,8 +1,11 @@
 package it.communikein.waveonthego.db;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StreamDownloadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +23,9 @@ public class DBHandler {
     public final static String DB_ARTICLES = "articles";
     public final static String DB_EVENTS = "events";
     public final static String DB_SPOTS = "spots";
+    public final static String DB_ADMINS = "roles/admin";
+    public final static String DB_ADMINS_WAITING = "roles/admin/waiting_approval";
+    public final static String DB_USERS = "users";
 
     private static DBHandler instance;
 
@@ -27,6 +33,7 @@ public class DBHandler {
     private DatabaseReference refArticles;
     private DatabaseReference refEvents;
     private DatabaseReference refSpots;
+    private DatabaseReference refAdmins;
 
     public static DBHandler getInstance(){
         if (instance == null)
@@ -44,12 +51,19 @@ public class DBHandler {
             refEvents = db.getReference(DB_EVENTS);
         if (refSpots == null)
             refSpots = db.getReference(DB_SPOTS);
+        if (refAdmins == null)
+            refAdmins = db.getReference(DB_ADMINS);
     }
 
     public void setupDB() {
         refArticles.keepSynced(true);
         refEvents.keepSynced(true);
         refSpots.keepSynced(true);
+        refAdmins.keepSynced(true);
+    }
+
+    public DatabaseReference getRefAdmins() {
+        return refAdmins;
     }
 
     public void writeToArticles(Article article){
@@ -98,5 +112,13 @@ public class DBHandler {
 
             refSpots.updateChildren(childUpdates);
         }
+    }
+
+    public void requestAdminPrivileges(FirebaseUser user){
+        db.getReference(DB_ADMINS_WAITING).child(user.getUid()).setValue(true);
+    }
+
+    public void confirmAdmin(String uid){
+        db.getReference(DB_ADMINS).child(uid).setValue(true);
     }
 }

@@ -29,4 +29,11 @@
     <string name="upload_failed">Upload fallito.</string>
     <string name="upload_completed">Upload completato!</string>
     <string name="title_info_spot">Info spot</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="label_name_surname">Nome Cognome</string>
+    <string name="mock_email">mail@google.com</string>
+    <string name="title_logout">Logout</string>
+    <string name="label_add">Aggiungi</string>
+    <string name="label_request_admin">Richiedi privilegi Admin</string>
+    <string name="label_mail">mail@google.com</string>
 </resources>
