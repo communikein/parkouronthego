@@ -3,6 +3,8 @@ package it.communikein.waveonthego;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +37,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.communikein.waveonthego.adapter.FirebaseEventListAdapter;
 import it.communikein.waveonthego.datatype.Event;
@@ -48,14 +51,11 @@ import it.communikein.waveonthego.views.EventViewHolder;
 public class EventsFragment extends Fragment
         implements FirebaseEventListAdapter.OnItemClick{
 
-    @BindView(R.id.login_button)
-    public LoginButton mFBLoginButton;
-
-    private CallbackManager mCallbackManager;
-
     private FirebaseEventListAdapter mAdapter;
-    private DatabaseReference ref;
     private Unbinder unbinder;
+
+    @BindView(R.id.fab_refresh)
+    FloatingActionButton fab_refresh;
 
     private final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
@@ -81,24 +81,11 @@ public class EventsFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_EVENTS);
         initUI(view);
-
-        if (isLoggedIn()) {
-            mFBLoginButton.setVisibility(View.GONE);
-            getEvents();
-        }
-        else
-            mFBLoginButton.setVisibility(View.VISIBLE);
     }
 
     private void initUI(View view) {
-        mCallbackManager = CallbackManager.Factory.create();
-        // If using in a fragment
-        mFBLoginButton.setFragment(this);
-        setFacebookLoginButton();
-
-        // specify an adapter (see also next example)
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DBHandler.DB_EVENTS);
         mAdapter = new FirebaseEventListAdapter(Event.class, EventViewHolder.class, ref);
         mAdapter.setOnItemClickListener(this);
 
@@ -115,7 +102,8 @@ public class EventsFragment extends Fragment
         unbinder.unbind();
     }
 
-    private void getEvents() {
+    @OnClick(R.id.fab_refresh)
+    public void getEvents() {
         if (isLoggedIn()) {
             /* make the API call */
             new GraphRequest(
@@ -135,7 +123,7 @@ public class EventsFragment extends Fragment
             ).executeAsync();
         }
         else
-            mFBLoginButton.setVisibility(View.VISIBLE);
+            Snackbar.make(fab_refresh, R.string.not_logged_into_fb, Snackbar.LENGTH_LONG).show();
     }
 
     private ArrayList<Event> parseFBResponse(JSONObject resp) {
@@ -187,34 +175,6 @@ public class EventsFragment extends Fragment
         return ris;
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void setFacebookLoginButton(){
-        mFBLoginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        mFBLoginButton.setReadPermissions(Collections.singletonList("public_profile, email"));
-        mFBLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                mFBLoginButton.setVisibility(View.GONE);
-                getEvents();
-            }
-
-            @Override
-            public void onCancel() {
-                mFBLoginButton.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                mFBLoginButton.setVisibility(View.VISIBLE);
-            }
-        });
-    }
 
     private boolean isLoggedIn() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();

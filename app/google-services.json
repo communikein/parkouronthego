@@ -23,22 +23,6 @@
           }
         },
         {
-          "client_id": "18183355600-u2rbd7sj6pa70e346t1ofk0pav7oent3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "it.communikein.waveonthego",
-            "certificate_hash": "3ef3619bf4f9af36dd4e14bf588eefdd48bb3d92"
-          }
-        },
-        {
-          "client_id": "18183355600-qeill0uh7si69b7ak3fsnr2c1dknjq9h.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "it.communikein.waveonthego",
-            "certificate_hash": "6668fc3adec7ae4e367b9d5efcd2ccc7bd17989d"
-          }
-        },
-        {
           "client_id": "18183355600-odnrdl4gi9ieo5ptcoei6kod5luo084t.apps.googleusercontent.com",
           "client_type": 3
         }

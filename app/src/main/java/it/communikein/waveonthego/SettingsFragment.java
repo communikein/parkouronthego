@@ -1,6 +1,7 @@
 package it.communikein.waveonthego;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
@@ -21,6 +28,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +48,10 @@ public class SettingsFragment extends Fragment {
 
     private FirebaseAdminToBeListAdapter mAdapter;
     private Unbinder unbinder;
+    private CallbackManager mCallbackManager;
 
+    @BindView(R.id.login_button)
+    public LoginButton mFBLoginButton;
     @BindView(R.id.addAdmin_btt)
     public Button addAdmin_btt;
     @BindView(R.id.my_recycler_view)
@@ -73,6 +85,13 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initUI(view);
+        initFB();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initUI(View view) {
@@ -120,6 +139,42 @@ public class SettingsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initFB() {
+        if (isLoggedInFB())
+            mFBLoginButton.setVisibility(View.GONE);
+        else {
+            mFBLoginButton.setVisibility(View.VISIBLE);
+
+            mCallbackManager = CallbackManager.Factory.create();
+            // If using in a fragment
+            mFBLoginButton.setFragment(this);
+
+            mFBLoginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            mFBLoginButton.setReadPermissions(Collections.singletonList("public_profile, email"));
+            mFBLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    mFBLoginButton.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onCancel() {
+                    mFBLoginButton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    mFBLoginButton.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    }
+
+    private boolean isLoggedInFB() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
     }
 
     @OnClick(R.id.addAdmin_btt)

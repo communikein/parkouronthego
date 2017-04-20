@@ -44,4 +44,5 @@
     <string name="yay">YAY! :D</string>
     <string name="label_description">Descrizione</string>
     <string name="label_location">Posizione</string>
+    <string name="not_logged_into_fb">Non sei loggato su FB</string>
 </resources>
